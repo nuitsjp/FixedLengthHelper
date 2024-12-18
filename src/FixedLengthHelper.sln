@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35410.144
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FixedLengthHelper", "FixedLengthHelper\FixedLengthHelper.csproj", "{CEDBA4E7-8B91-4C0E-8353-010206461BFB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FixedLengthHelper.Test", "FixedLengthHelper.Test\FixedLengthHelper.Test.csproj", "{F3AE297A-5F88-4E8E-8EB4-46ED8D4879E1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample", "Sample\Sample.csproj", "{2677D768-6E9E-40AE-8CE0-BB8B4C5BA3E6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CEDBA4E7-8B91-4C0E-8353-010206461BFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEDBA4E7-8B91-4C0E-8353-010206461BFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEDBA4E7-8B91-4C0E-8353-010206461BFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEDBA4E7-8B91-4C0E-8353-010206461BFB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3AE297A-5F88-4E8E-8EB4-46ED8D4879E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3AE297A-5F88-4E8E-8EB4-46ED8D4879E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3AE297A-5F88-4E8E-8EB4-46ED8D4879E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3AE297A-5F88-4E8E-8EB4-46ED8D4879E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2677D768-6E9E-40AE-8CE0-BB8B4C5BA3E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2677D768-6E9E-40AE-8CE0-BB8B4C5BA3E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2677D768-6E9E-40AE-8CE0-BB8B4C5BA3E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2677D768-6E9E-40AE-8CE0-BB8B4C5BA3E6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
