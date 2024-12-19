@@ -12,14 +12,33 @@ public class FixedLengthDataReaderBuilder
             new FixedLengthReader(new ByteStreamReader(stream), encoding),
             new FixedLengthDataReaderConfig(_columns));
     }
-    public FixedLengthDataReaderBuilder AddColumn(int offsetBytes, int lengthBytes, TrimMode trimMode = TrimMode.None, char[]? trimChars = null)
+
+    public FixedLengthDataReaderBuilder AddColumn(int offsetBytes, int lengthBytes)
+        => AddColumn(offsetBytes, lengthBytes, TrimMode.None);
+
+    public FixedLengthDataReaderBuilder AddColumn(int offsetBytes, int lengthBytes, Func<string, bool> isDbNull)
+        => AddColumn(offsetBytes, lengthBytes, TrimMode.None, null, isDbNull);
+
+
+    public FixedLengthDataReaderBuilder AddColumn(int offsetBytes, int lengthBytes, TrimMode trimMode, char[]? trimChars = null, bool isEmptyNull = false)
+        => AddColumn(offsetBytes, lengthBytes, trimMode, trimChars, s => isEmptyNull && string.IsNullOrEmpty(s));
+
+    public FixedLengthDataReaderBuilder AddColumn(int offsetBytes, int lengthBytes, TrimMode trimMode, char[]? trimChars, Func<string, bool> isDbNull)
+        => AddColumn(null, offsetBytes, lengthBytes, trimMode, trimChars, isDbNull);
+
+    public FixedLengthDataReaderBuilder AddColumn(string? name, int offsetBytes, int lengthBytes)
+        => AddColumn(name, offsetBytes, lengthBytes, TrimMode.None);
+
+    public FixedLengthDataReaderBuilder AddColumn(string? name, int offsetBytes, int lengthBytes, Func<string, bool> isDbNull)
+        => AddColumn(name, offsetBytes, lengthBytes, TrimMode.None, null, isDbNull);
+
+
+    public FixedLengthDataReaderBuilder AddColumn(string? name, int offsetBytes, int lengthBytes, TrimMode trimMode, char[]? trimChars = null, bool isEmptyNull = false)
+        => AddColumn(name, offsetBytes, lengthBytes, trimMode, trimChars, s => isEmptyNull && string.IsNullOrEmpty(s));
+
+    public FixedLengthDataReaderBuilder AddColumn(string? name, int offsetBytes, int lengthBytes, TrimMode trimMode, char[]? trimChars, Func<string, bool> isDbNull)
     {
-        _columns.Add(new Column(_columns.Count, null, offsetBytes, lengthBytes, trimMode, trimChars));
-        return this;
-    }
-    public FixedLengthDataReaderBuilder AddColumn(string name, int offsetBytes, int lengthBytes, TrimMode trimMode = TrimMode.None, char[]? trimChars = null)
-    {
-        _columns.Add(new Column(_columns.Count, name, offsetBytes, lengthBytes, trimMode, trimChars));
+        _columns.Add(new Column(_columns.Count, name, offsetBytes, lengthBytes, trimMode, trimChars, isDbNull));
         return this;
     }
 }

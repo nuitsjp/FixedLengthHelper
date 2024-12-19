@@ -228,6 +228,32 @@ public class FixedLengthDataReaderTest
         }
 
         [Fact]
+        public void WhenEmpty()
+        {
+            // Arrange
+            var stream = new MemoryStream(
+                """
+                                              123423006022004
+                    """u8.ToArray());
+
+            // Act
+            using var reader = FixedLengthDataReader
+                .CreateBuilder()
+                .AddColumn(0, 5, TrimMode.Trim, isEmptyNull: true)
+                .AddColumn(5, 21, TrimMode.Trim)
+                .AddColumn(26, 10, s => true)
+                .AddColumn("Balance", 36, 5, s => true)
+                .Build(stream, Encoding.UTF8);
+
+            // Assert
+            reader.Read().Should().BeTrue();
+            reader.GetValue(0).Should().Be(DBNull.Value);
+            reader.GetValue(1).Should().Be(string.Empty);
+            reader.GetValue(2).Should().Be(DBNull.Value);
+            reader.GetValue(3).Should().Be(DBNull.Value);
+        }
+
+        [Fact]
         public void WhenNotExist()
         {
             // Arrange

@@ -6,5 +6,11 @@ public record Column(
     int OffsetBytes,
     int LengthBytes,
     TrimMode TrimMode,
-    char[]? TrimChars
-);
+    char[]? TrimChars,
+    // ReSharper disable once InconsistentNaming
+    Func<string, bool> IsDBNull);
+
+public interface IIsDBNull
+{
+
+}
