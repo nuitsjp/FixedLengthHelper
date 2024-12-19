@@ -345,6 +345,58 @@ public class FixedLengthDataReaderTest
     }
 #endif
 
+    // ReSharper disable once InconsistentNaming
+    public class IsDBNull
+    {
+        [Fact]
+        public void Normality()
+        {
+            // Arrange
+            var stream = new MemoryStream(
+                """
+                                              123423006022004
+                    """u8.ToArray());
+
+            // Act
+            using var reader = FixedLengthDataReader
+                .CreateBuilder()
+                .AddColumn(0, 5, TrimMode.Trim, isEmptyNull: true)
+                .AddColumn(5, 21, TrimMode.Trim)
+                .AddColumn(26, 10, s => true)
+                .AddColumn("Balance", 36, 5, s => true)
+                .Build(stream, Encoding.UTF8);
+
+            // Assert
+            reader.Read().Should().BeTrue();
+            reader.IsDBNull(0).Should().BeTrue();
+            reader.IsDBNull(1).Should().BeFalse();
+            reader.IsDBNull(2).Should().BeTrue();
+            reader.IsDBNull(3).Should().BeTrue();
+        }
+
+        [Fact]
+        public void WhenNotExist()
+        {
+            // Arrange
+            var stream = new MemoryStream(
+                """
+                    00554Pedro Gomez          123423006022004
+                    """u8.ToArray());
+            using var reader = FixedLengthDataReader
+                .CreateBuilder()
+                .Build(stream, Encoding.UTF8);
+
+            // Act
+            reader.Read().Should().BeTrue();
+            // ReSharper disable once AccessToDisposedClosure
+            var act = () => reader.IsDBNull(0);
+
+            // Assert
+            act.Should().Throw<IndexOutOfRangeException>();
+        }
+
+    }
+
     [Fact]
     public void NotSupported()
     {
@@ -374,7 +426,6 @@ public class FixedLengthDataReaderTest
         ((Action)(() => reader.GetDecimal(0))).Should().Throw<NotSupportedException>();
         ((Action)(() => reader.GetDateTime(0))).Should().Throw<NotSupportedException>();
         ((Action)(() => reader.GetData(0))).Should().Throw<NotSupportedException>();
-        ((Action)(() => reader.IsDBNull(0))).Should().Throw<NotSupportedException>();
         ((Action)(() => reader.GetSchemaTable())).Should().Throw<NotSupportedException>();
         ((Action)(() => reader.NextResult())).Should().Throw<NotSupportedException>();
         // ReSharper restore AccessToDisposedClosure
