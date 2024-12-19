@@ -1,0 +1,201 @@
+﻿using System.Data;
+using System.Text;
+
+namespace FixedLengthHelper;
+
+public class FixedLengthDataReaderBuilder
+{
+    private readonly List<Column> _columns = new();
+
+    public FixedLengthDataReader Build(Stream stream, Encoding encoding)
+    {
+        return new FixedLengthDataReader(
+            new FixedLengthReader(new ByteStreamReader(stream), encoding),
+            new FixedLengthDataReaderConfig(_columns));
+    }
+    public FixedLengthDataReaderBuilder AddColumn(int offsetBytes, int lengthBytes)
+    {
+        _columns.Add(new Column(_columns.Count, null, offsetBytes, lengthBytes));
+        return this;
+    }
+    public FixedLengthDataReaderBuilder AddColumn(string name, int offsetBytes, int lengthBytes)
+    {
+        _columns.Add(new Column(_columns.Count, name, offsetBytes, lengthBytes));
+        return this;
+    }
+}
+
+public record FixedLengthDataReaderConfig(
+    IReadOnlyList<Column> Columns);
+
+public record Column(
+    int Ordinal,
+    string? Name,
+    int OffsetBytes,
+    int LengthBytes
+);
+
+public class FixedLengthDataReader : IDataReader
+{
+    private readonly FixedLengthReader _fixedLengthReader;
+    private readonly IReadOnlyDictionary<string, int> _columnOrdinals;
+    private readonly IReadOnlyList<Column> _columns;
+
+    public FixedLengthDataReader(
+        FixedLengthReader fixedLengthReader,
+        FixedLengthDataReaderConfig config)
+    {
+        _fixedLengthReader = fixedLengthReader;
+        _columnOrdinals = config
+            .Columns
+            .Where(x => x.Name is not null)
+            .ToDictionary(x => x.Name!, column => column.Ordinal);
+        _columns = config.Columns;
+    }
+
+    public static FixedLengthDataReaderBuilder CreateBuilder() => new();
+
+    public void Dispose()
+    {
+        _fixedLengthReader.Dispose();
+    }
+
+    public string GetName(int i)
+    {
+        throw new NotSupportedException();
+    }
+
+    public string GetDataTypeName(int i)
+    {
+        throw new NotSupportedException();
+    }
+
+    public Type GetFieldType(int i)
+    {
+        throw new NotSupportedException();
+    }
+
+    public object GetValue(int i)
+    {
+        var column = _columns[i];
+        return _fixedLengthReader.GetField(column.OffsetBytes, column.LengthBytes);
+    }
+
+    public int GetValues(object[] values)
+    {
+        throw new NotSupportedException();
+    }
+
+    public int GetOrdinal(string name)
+    {
+        throw new NotSupportedException();
+    }
+
+    public bool GetBoolean(int i)
+    {
+        throw new NotSupportedException();
+    }
+
+    public byte GetByte(int i)
+    {
+        throw new NotSupportedException();
+    }
+
+    public long GetBytes(int i, long fieldOffset, byte[] buffer, int bufferoffset, int length)
+    {
+        throw new NotSupportedException();
+    }
+
+    public char GetChar(int i)
+    {
+        throw new NotSupportedException();
+    }
+
+    public long GetChars(int i, long fieldoffset, char[]? buffer, int bufferoffset, int length)
+    {
+        throw new NotSupportedException();
+    }
+
+    public Guid GetGuid(int i)
+    {
+        throw new NotSupportedException();
+    }
+
+    public short GetInt16(int i)
+    {
+        throw new NotSupportedException();
+    }
+
+    public int GetInt32(int i)
+    {
+        throw new NotSupportedException();
+    }
+
+    public long GetInt64(int i)
+    {
+        throw new NotSupportedException();
+    }
+
+    public float GetFloat(int i)
+    {
+        throw new NotSupportedException();
+    }
+
+    public double GetDouble(int i)
+    {
+        throw new NotSupportedException();
+    }
+
+    public string GetString(int i)
+    {
+        throw new NotSupportedException();
+    }
+
+    public decimal GetDecimal(int i)
+    {
+        throw new NotSupportedException();
+    }
+
+    public DateTime GetDateTime(int i)
+    {
+        throw new NotSupportedException();
+    }
+
+    public IDataReader? GetData(int i)
+    {
+        throw new NotSupportedException();
+    }
+
+    public bool IsDBNull(int i)
+    {
+        throw new NotSupportedException();
+    }
+
+    public int FieldCount { get; }
+
+    public object this[int i] => throw new NotSupportedException();
+
+    public object this[string name] => throw new NotSupportedException();
+
+    public void Close()
+    {
+        throw new NotSupportedException();
+    }
+
+    public DataTable? GetSchemaTable()
+    {
+        throw new NotSupportedException();
+    }
+
+    public bool NextResult()
+    {
+        throw new NotSupportedException();
+    }
+
+    public bool Read()
+        => _fixedLengthReader.Read();
+
+    public int Depth { get; }
+    public bool IsClosed { get; }
+    public int RecordsAffected { get; }
+}
