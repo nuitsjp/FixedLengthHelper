@@ -2,7 +2,11 @@
 
 namespace FixedLengthHelper;
 
-public class FixedLengthDataReader : IDataReader
+public class FixedLengthDataReader 
+    : IDataReader
+#if NET8_0_OR_GREATER
+        , IAsyncDisposable
+#endif
 {
     private readonly FixedLengthReader _fixedLengthReader;
     private readonly IReadOnlyDictionary<string, int> _columnOrdinals;
@@ -27,6 +31,29 @@ public class FixedLengthDataReader : IDataReader
         _fixedLengthReader.Dispose();
     }
 
+
+#if NET8_0_OR_GREATER
+    public async ValueTask DisposeAsync()
+    {
+        await _fixedLengthReader.DisposeAsync();
+    }
+#endif
+
+    public object this[int i] => GetValue(i);
+
+    public object this[string name] => GetValue(GetOrdinal(name));
+    public int GetOrdinal(string name)
+    {
+        return _columnOrdinals[name];
+    }
+
+    public object GetValue(int i)
+    {
+        var column = _columns[i];
+        return _fixedLengthReader.GetField(column.OffsetBytes, column.LengthBytes);
+    }
+
+    #region NotSupported
     public string GetName(int i)
     {
         throw new NotSupportedException();
@@ -42,20 +69,10 @@ public class FixedLengthDataReader : IDataReader
         throw new NotSupportedException();
     }
 
-    public object GetValue(int i)
-    {
-        var column = _columns[i];
-        return _fixedLengthReader.GetField(column.OffsetBytes, column.LengthBytes);
-    }
 
     public int GetValues(object[] values)
     {
         throw new NotSupportedException();
-    }
-
-    public int GetOrdinal(string name)
-    {
-        return _columnOrdinals[name];
     }
 
     public bool GetBoolean(int i)
@@ -140,10 +157,6 @@ public class FixedLengthDataReader : IDataReader
 
     public int FieldCount { get; }
 
-    public object this[int i] => throw new NotSupportedException();
-
-    public object this[string name] => throw new NotSupportedException();
-
     public void Close()
     {
         throw new NotSupportedException();
@@ -165,4 +178,5 @@ public class FixedLengthDataReader : IDataReader
     public int Depth { get; }
     public bool IsClosed { get; }
     public int RecordsAffected { get; }
+    #endregion
 }
