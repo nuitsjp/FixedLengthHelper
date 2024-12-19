@@ -38,7 +38,7 @@ public class FixedLengthDataReaderConfigTest
                    }
                    """;
 
-            var config = FixedLengthDataReaderConfig.Parse(json);
+            var config = FixedLengthDataReaderConfig.Deserialize(json);
 
             config.Should().NotBeNull();
             config.Columns.Should().HaveCount(3);
@@ -76,7 +76,7 @@ public class FixedLengthDataReaderConfigTest
         public void InvalidJson()
         {
             var json = "invalid json";
-            Action act = () => FixedLengthDataReaderConfig.Parse(json);
+            Action act = () => FixedLengthDataReaderConfig.Deserialize(json);
             act.Should().Throw<JsonException>();
         }
 
@@ -84,7 +84,7 @@ public class FixedLengthDataReaderConfigTest
         public void MissingColumns()
         {
             var json = "{}";
-            Action act = () => FixedLengthDataReaderConfig.Parse(json);
+            Action act = () => FixedLengthDataReaderConfig.Deserialize(json);
             act.Should().Throw<InvalidOperationException>();
         }
     }

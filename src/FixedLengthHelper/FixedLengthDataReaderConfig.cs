@@ -2,9 +2,19 @@
 
 namespace FixedLengthHelper;
 
+/// <summary>
+/// FixedLengthDataReader configuration.
+/// </summary>
+/// <param name="Columns"></param>
 public record FixedLengthDataReaderConfig(IReadOnlyList<Column> Columns)
 {
-    public static FixedLengthDataReaderConfig Parse(string json)
+    /// <summary>
+    /// Deserializes the JSON string to FixedLengthDataReaderConfig.
+    /// </summary>
+    /// <param name="json"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
+    public static FixedLengthDataReaderConfig Deserialize(string json)
     {
         var options = new JsonSerializerOptions
         {
