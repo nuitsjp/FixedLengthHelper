@@ -140,7 +140,7 @@ public class FixedLengthDataReader
     }
 
     /// <inheritdoc />
-    public long GetBytes(int i, long fieldOffset, byte[] buffer, int bufferoffset, int length)
+    public long GetBytes(int i, long fieldOffset, byte[]? buffer, int bufferoffset, int length)
     {
         throw new NotSupportedException();
     }

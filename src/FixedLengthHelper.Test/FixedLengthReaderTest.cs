@@ -129,7 +129,8 @@ public class FixedLengthReaderTest
 #endif
 
         // Act
-        reader.Read().Should().BeTrue();
+        (await reader.ReadAsync()).Should().BeTrue();
+        // ReSharper disable once AccessToDisposedClosure
         var act = () => reader.GetField(1, 2, (TrimMode)9);
 
         // Assert
