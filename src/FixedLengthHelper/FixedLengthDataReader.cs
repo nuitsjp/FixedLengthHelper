@@ -62,7 +62,9 @@ public class FixedLengthDataReader
         if (i < _columns.Count)
         {
             var column = _columns[i];
-            return _fixedLengthReader.GetField(column.OffsetBytes, column.LengthBytes);
+            return column.TrimChars is null 
+                ? _fixedLengthReader.GetField(column.OffsetBytes, column.LengthBytes, column.TrimMode) 
+                : _fixedLengthReader.GetField(column.OffsetBytes, column.LengthBytes, column.TrimMode, column.TrimChars);
         }
 
         throw new IndexOutOfRangeException($"Field with ordinal '{i}' was not found.");

@@ -12,14 +12,14 @@ public class FixedLengthDataReaderBuilder
             new FixedLengthReader(new ByteStreamReader(stream), encoding),
             new FixedLengthDataReaderConfig(_columns));
     }
-    public FixedLengthDataReaderBuilder AddColumn(int offsetBytes, int lengthBytes)
+    public FixedLengthDataReaderBuilder AddColumn(int offsetBytes, int lengthBytes, TrimMode trimMode = TrimMode.None, char[]? trimChars = null)
     {
-        _columns.Add(new Column(_columns.Count, null, offsetBytes, lengthBytes));
+        _columns.Add(new Column(_columns.Count, null, offsetBytes, lengthBytes, trimMode, trimChars));
         return this;
     }
-    public FixedLengthDataReaderBuilder AddColumn(string name, int offsetBytes, int lengthBytes)
+    public FixedLengthDataReaderBuilder AddColumn(string name, int offsetBytes, int lengthBytes, TrimMode trimMode = TrimMode.None, char[]? trimChars = null)
     {
-        _columns.Add(new Column(_columns.Count, name, offsetBytes, lengthBytes));
+        _columns.Add(new Column(_columns.Count, name, offsetBytes, lengthBytes, trimMode, trimChars));
         return this;
     }
 }

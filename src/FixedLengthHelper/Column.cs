@@ -4,5 +4,7 @@ public record Column(
     int Ordinal,
     string? Name,
     int OffsetBytes,
-    int LengthBytes
+    int LengthBytes,
+    TrimMode TrimMode,
+    char[]? TrimChars
 );
