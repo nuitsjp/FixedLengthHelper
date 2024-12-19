@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Xml.Linq;
 
 namespace FixedLengthHelper;
 
@@ -48,14 +49,23 @@ public class FixedLengthDataReader
     /// <inheritdoc />
     public int GetOrdinal(string name)
     {
-        return _columnOrdinals[name];
+        if (_columnOrdinals.TryGetValue(name, out var ordinal))
+        {
+            return ordinal;
+        }
+        throw new IndexOutOfRangeException($"Field with name '{name}' was not found.");
     }
 
     /// <inheritdoc />
     public object GetValue(int i)
     {
-        var column = _columns[i];
-        return _fixedLengthReader.GetField(column.OffsetBytes, column.LengthBytes);
+        if (i < _columns.Count)
+        {
+            var column = _columns[i];
+            return _fixedLengthReader.GetField(column.OffsetBytes, column.LengthBytes);
+        }
+
+        throw new IndexOutOfRangeException($"Field with ordinal '{i}' was not found.");
     }
 
     /// <inheritdoc />
