@@ -27,6 +27,8 @@ public class FixedLengthReader(
     {
     }
 
+    public bool IsClosed => byteStreamReader.IsClosed;
+
     /// <summary>
     /// Reads a line of bytes from the stream.
     /// </summary>

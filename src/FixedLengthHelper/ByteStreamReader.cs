@@ -79,6 +79,11 @@ public class ByteStreamReader : IByteStreamReader
     }
 
     /// <summary>
+    /// Gets a value indicating whether the stream is closed.
+    /// </summary>
+    public bool IsClosed => _stream.CanRead is false;
+
+    /// <summary>
     /// Reads a line of bytes from the stream.
     /// </summary>
     /// <returns>

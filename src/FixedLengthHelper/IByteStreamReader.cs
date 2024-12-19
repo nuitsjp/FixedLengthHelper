@@ -7,6 +7,10 @@ public interface IByteStreamReader : IDisposable, IAsyncDisposable
 #endif
 {
     /// <summary>
+    /// Gets a value indicating whether the stream is closed.
+    /// </summary>
+    bool IsClosed { get; }
+    /// <summary>
     /// Reads a line of bytes from the stream.
     /// </summary>
     /// <returns>

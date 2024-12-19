@@ -6,8 +6,8 @@ public interface IFixedLengthReader : IDisposable
 public interface IFixedLengthReader : IDisposable, IAsyncDisposable
 #endif
 {
+    bool IsClosed { get; }
     bool Read();
-
     Task<bool> ReadAsync();
     string GetField(int offsetBytes, int lengthBytes, TrimMode trimMode = TrimMode.None, params char[] trimChars);
 }

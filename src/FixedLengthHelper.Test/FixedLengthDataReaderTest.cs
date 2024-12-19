@@ -13,6 +13,50 @@ public class FixedLengthDataReaderTest
 #endif
 
     [Fact]
+    public void FieldCount()
+    {
+        // Arrange
+        var stream = new MemoryStream(""u8.ToArray());
+        using var reader = FixedLengthDataReader
+            .CreateBuilder()
+            .AddColumn("CustomerId", 0, 5)
+            .AddColumn("Name", 5, 21)
+            .AddColumn("Balance", 26, 15)
+            .Build(stream, Encoding.UTF8);
+
+        // Act & Assert
+        reader.FieldCount.Should().Be(3);
+    }
+
+    [Fact]
+    public void Depth()
+    {
+        // Arrange
+        var stream = new MemoryStream(""u8.ToArray());
+        using var reader = FixedLengthDataReader
+            .CreateBuilder()
+            .Build(stream, Encoding.UTF8);
+
+        // Act & Assert
+        reader.Depth.Should().Be(0);
+    }
+
+    [Fact]
+    public void IsClosed()
+    {
+        // Arrange
+        var stream = new MemoryStream(""u8.ToArray());
+        var reader = FixedLengthDataReader
+            .CreateBuilder()
+            .Build(stream, Encoding.UTF8);
+
+        // Act & Assert
+        reader.IsClosed.Should().BeFalse();
+        reader.Dispose();
+        reader.IsClosed.Should().BeTrue();
+    }
+
+    [Fact]
     public void This_ByOrdinal()
     {
         // Arrange

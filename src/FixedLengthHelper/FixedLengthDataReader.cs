@@ -39,6 +39,10 @@ public class FixedLengthDataReader
     }
 #endif
 
+
+    public int FieldCount => _columns.Count;
+    public int Depth => 0;
+    public bool IsClosed => _fixedLengthReader.IsClosed;
     public object this[int i] => GetValue(i);
 
     public object this[string name] => GetValue(GetOrdinal(name));
@@ -155,8 +159,6 @@ public class FixedLengthDataReader
         throw new NotSupportedException();
     }
 
-    public int FieldCount { get; }
-
     public void Close()
     {
         throw new NotSupportedException();
@@ -175,8 +177,6 @@ public class FixedLengthDataReader
     public bool Read()
         => _fixedLengthReader.Read();
 
-    public int Depth { get; }
-    public bool IsClosed { get; }
     public int RecordsAffected { get; }
     #endregion
 }
