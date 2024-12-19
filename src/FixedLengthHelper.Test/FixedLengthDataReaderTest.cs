@@ -47,4 +47,24 @@ public class FixedLengthDataReaderTest
         reader.Read().Should().BeTrue();
         reader.Read().Should().BeFalse();
     }
+
+    [Fact]
+    public void GetOrdinal()
+    {
+        // Arrange
+        var stream = new MemoryStream(""u8.ToArray());
+
+        // Act
+        using var reader = FixedLengthDataReader
+            .CreateBuilder()
+            .AddColumn("CustomerId", 0, 5)
+            .AddColumn("Name", 5, 21)
+            .AddColumn("Balance", 26, 15)
+            .Build(stream, Encoding.UTF8);
+
+        // Assert
+        reader.GetOrdinal("CustomerId").Should().Be(0);
+        reader.GetOrdinal("Name").Should().Be(1);
+        reader.GetOrdinal("Balance").Should().Be(2);
+    }
 }

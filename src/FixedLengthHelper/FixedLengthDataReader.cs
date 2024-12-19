@@ -1,39 +1,6 @@
 ﻿using System.Data;
-using System.Text;
 
 namespace FixedLengthHelper;
-
-public class FixedLengthDataReaderBuilder
-{
-    private readonly List<Column> _columns = new();
-
-    public FixedLengthDataReader Build(Stream stream, Encoding encoding)
-    {
-        return new FixedLengthDataReader(
-            new FixedLengthReader(new ByteStreamReader(stream), encoding),
-            new FixedLengthDataReaderConfig(_columns));
-    }
-    public FixedLengthDataReaderBuilder AddColumn(int offsetBytes, int lengthBytes)
-    {
-        _columns.Add(new Column(_columns.Count, null, offsetBytes, lengthBytes));
-        return this;
-    }
-    public FixedLengthDataReaderBuilder AddColumn(string name, int offsetBytes, int lengthBytes)
-    {
-        _columns.Add(new Column(_columns.Count, name, offsetBytes, lengthBytes));
-        return this;
-    }
-}
-
-public record FixedLengthDataReaderConfig(
-    IReadOnlyList<Column> Columns);
-
-public record Column(
-    int Ordinal,
-    string? Name,
-    int OffsetBytes,
-    int LengthBytes
-);
 
 public class FixedLengthDataReader : IDataReader
 {
@@ -88,7 +55,7 @@ public class FixedLengthDataReader : IDataReader
 
     public int GetOrdinal(string name)
     {
-        throw new NotSupportedException();
+        return _columnOrdinals[name];
     }
 
     public bool GetBoolean(int i)
