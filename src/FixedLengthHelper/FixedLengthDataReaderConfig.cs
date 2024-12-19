@@ -56,8 +56,21 @@ public record FixedLengthDataReaderConfig(IReadOnlyList<Column> Columns)
         return new FixedLengthDataReaderConfig(columns);
     }
 
+    /// <summary>
+    /// JSON object.
+    /// </summary>
+    /// <param name="Columns"></param>
     private record JsonObject(Dictionary<string, ColumnRaw>? Columns);
 
+    /// <summary>
+    /// Column definition.
+    /// </summary>
+    /// <param name="Ordinal"></param>
+    /// <param name="Offset"></param>
+    /// <param name="Length"></param>
+    /// <param name="TrimMode"></param>
+    /// <param name="TrimChars"></param>
+    /// <param name="IsEmptyNull"></param>
     // ReSharper disable once ClassNeverInstantiated.Local
     private record ColumnRaw(
         int Ordinal,

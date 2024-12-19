@@ -1,5 +1,8 @@
 ﻿namespace FixedLengthHelper;
 
+/// <summary>
+/// Reads lines of bytes from a stream. 
+/// </summary>
 #if NET48_OR_GREATER
 public interface IByteStreamReader : IDisposable
 #else

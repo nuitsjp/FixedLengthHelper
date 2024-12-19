@@ -2,17 +2,40 @@
 
 namespace FixedLengthHelper;
 
+/// <summary>
+/// IDataReader implementation for fixed-length files.
+/// </summary>
 public class FixedLengthDataReader 
     : IDataReader
 #if NET8_0_OR_GREATER
         , IAsyncDisposable
 #endif
 {
+    /// <summary>
+    /// IFixedLengthReader instance.
+    /// </summary>
     private readonly IFixedLengthReader _fixedLengthReader;
+    
+    /// <summary>
+    /// Name and ordinal of columns.
+    /// </summary>
     private readonly IReadOnlyDictionary<string, int> _columnOrdinals;
+    
+    /// <summary>
+    /// Columns.
+    /// </summary>
     private readonly IReadOnlyList<Column> _columns;
+    
+    /// <summary>
+    /// Disposed flag.
+    /// </summary>
     private bool _isDisposed;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FixedLengthDataReader"/> class.
+    /// </summary>
+    /// <param name="fixedLengthReader"></param>
+    /// <param name="config"></param>
     public FixedLengthDataReader(
         IFixedLengthReader fixedLengthReader,
         FixedLengthDataReaderConfig config)
@@ -25,6 +48,10 @@ public class FixedLengthDataReader
         _columns = config.Columns;
     }
 
+    /// <summary>
+    /// Creates a new instance of the <see cref="FixedLengthDataReaderBuilder"/> class.
+    /// </summary>
+    /// <returns></returns>
     public static FixedLengthDataReaderBuilder CreateBuilder() => new();
 
     /// <inheritdoc />
