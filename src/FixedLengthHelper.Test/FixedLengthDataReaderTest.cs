@@ -196,6 +196,21 @@ public class FixedLengthDataReaderTest
         reader.GetOrdinal("Balance").Should().Be(2);
     }
 
+    [Fact]
+    public void Close()
+    {
+        // Arrange
+        var stream = new MemoryStream(""u8.ToArray());
+        var reader = FixedLengthDataReader
+            .CreateBuilder()
+            .Build(stream, Encoding.UTF8);
+        // Act & Assert
+        reader.IsClosed.Should().BeFalse();
+        reader.Close();
+        reader.IsClosed.Should().BeTrue();
+        reader.Close();
+    }
+
 #if NET8_0_OR_GREATER
     [Fact]
     public async Task DisposeAsync()
@@ -243,7 +258,6 @@ public class FixedLengthDataReaderTest
         ((Action)(() => reader.GetDateTime(0))).Should().Throw<NotSupportedException>();
         ((Action)(() => reader.GetData(0))).Should().Throw<NotSupportedException>();
         ((Action)(() => reader.IsDBNull(0))).Should().Throw<NotSupportedException>();
-        ((Action)(() => reader.Close())).Should().Throw<NotSupportedException>();
         ((Action)(() => reader.GetSchemaTable())).Should().Throw<NotSupportedException>();
         ((Action)(() => reader.NextResult())).Should().Throw<NotSupportedException>();
         // ReSharper restore AccessToDisposedClosure

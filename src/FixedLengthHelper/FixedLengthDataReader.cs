@@ -11,6 +11,7 @@ public class FixedLengthDataReader
     private readonly FixedLengthReader _fixedLengthReader;
     private readonly IReadOnlyDictionary<string, int> _columnOrdinals;
     private readonly IReadOnlyList<Column> _columns;
+    private bool _isDisposed;
 
     public FixedLengthDataReader(
         FixedLengthReader fixedLengthReader,
@@ -26,155 +27,203 @@ public class FixedLengthDataReader
 
     public static FixedLengthDataReaderBuilder CreateBuilder() => new();
 
-    public void Dispose()
-    {
-        _fixedLengthReader.Dispose();
-    }
-
-
-#if NET8_0_OR_GREATER
-    public async ValueTask DisposeAsync()
-    {
-        await _fixedLengthReader.DisposeAsync();
-    }
-#endif
-
-
+    /// <inheritdoc />
     public int FieldCount => _columns.Count;
+
+    /// <inheritdoc />
     public int Depth => 0;
+
+    /// <inheritdoc />
     public bool IsClosed => _fixedLengthReader.IsClosed;
+
+    /// <inheritdoc />
     public int RecordsAffected => 0;
+
+    /// <inheritdoc />
     public object this[int i] => GetValue(i);
 
+    /// <inheritdoc />
     public object this[string name] => GetValue(GetOrdinal(name));
+
+    /// <inheritdoc />
     public int GetOrdinal(string name)
     {
         return _columnOrdinals[name];
     }
 
+    /// <inheritdoc />
     public object GetValue(int i)
     {
         var column = _columns[i];
         return _fixedLengthReader.GetField(column.OffsetBytes, column.LengthBytes);
     }
 
+    /// <inheritdoc />
+    public void Close()
+    {
+        Dispose();
+    }
+
+    /// <inheritdoc />
+    public void Dispose()
+    {
+        if (_isDisposed)
+        {
+            return;
+        }
+        _isDisposed = true;
+
+        _fixedLengthReader.Dispose();
+    }
+
+#if NET8_0_OR_GREATER
+    /// <inheritdoc />
+    public async ValueTask DisposeAsync()
+    {
+        if (_isDisposed)
+        {
+            return;
+        }
+        _isDisposed = true;
+
+        await _fixedLengthReader.DisposeAsync();
+    }
+#endif
+
     #region NotSupported
+    /// <inheritdoc />
     public string GetName(int i)
     {
         throw new NotSupportedException();
     }
 
+    /// <inheritdoc />
     public string GetDataTypeName(int i)
     {
         throw new NotSupportedException();
     }
 
+    /// <inheritdoc />
     public Type GetFieldType(int i)
     {
         throw new NotSupportedException();
     }
 
-
+    /// <inheritdoc />
     public int GetValues(object[] values)
     {
         throw new NotSupportedException();
     }
 
+    /// <inheritdoc />
     public bool GetBoolean(int i)
     {
         throw new NotSupportedException();
     }
 
+    /// <inheritdoc />
     public byte GetByte(int i)
     {
         throw new NotSupportedException();
     }
 
+    /// <inheritdoc />
     public long GetBytes(int i, long fieldOffset, byte[] buffer, int bufferoffset, int length)
     {
         throw new NotSupportedException();
     }
 
+    /// <inheritdoc />
     public char GetChar(int i)
     {
         throw new NotSupportedException();
     }
 
+    /// <inheritdoc />
     public long GetChars(int i, long fieldoffset, char[]? buffer, int bufferoffset, int length)
     {
         throw new NotSupportedException();
     }
 
+    /// <inheritdoc />
     public Guid GetGuid(int i)
     {
         throw new NotSupportedException();
     }
 
+    /// <inheritdoc />
     public short GetInt16(int i)
     {
         throw new NotSupportedException();
     }
 
+    /// <inheritdoc />
     public int GetInt32(int i)
     {
         throw new NotSupportedException();
     }
 
+    /// <inheritdoc />
     public long GetInt64(int i)
     {
         throw new NotSupportedException();
     }
 
+    /// <inheritdoc />
     public float GetFloat(int i)
     {
         throw new NotSupportedException();
     }
 
+    /// <inheritdoc />
     public double GetDouble(int i)
     {
         throw new NotSupportedException();
     }
 
+    /// <inheritdoc />
     public string GetString(int i)
     {
         throw new NotSupportedException();
     }
 
+    /// <inheritdoc />
     public decimal GetDecimal(int i)
     {
         throw new NotSupportedException();
     }
 
+    /// <inheritdoc />
     public DateTime GetDateTime(int i)
     {
         throw new NotSupportedException();
     }
 
-    public IDataReader? GetData(int i)
+    /// <inheritdoc />
+    public IDataReader GetData(int i)
     {
         throw new NotSupportedException();
     }
 
+    /// <inheritdoc />
     public bool IsDBNull(int i)
     {
         throw new NotSupportedException();
     }
 
-    public void Close()
-    {
-        throw new NotSupportedException();
-    }
-
+    /// <inheritdoc />
     public DataTable? GetSchemaTable()
     {
         throw new NotSupportedException();
     }
 
+    /// <inheritdoc />
     public bool NextResult()
     {
         throw new NotSupportedException();
     }
 
+    /// <inheritdoc />
     public bool Read()
         => _fixedLengthReader.Read();
     #endregion
