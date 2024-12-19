@@ -116,10 +116,7 @@ public class FixedLengthDataReader
     }
 
     /// <inheritdoc />
-    public Type GetFieldType(int i)
-    {
-        throw new NotSupportedException();
-    }
+    public Type GetFieldType(int i) => typeof(string);
 
     /// <inheritdoc />
     public int GetValues(object[] values)

@@ -141,6 +141,18 @@ public class FixedLengthDataReaderTest
         reader.Read().Should().BeFalse();
     }
 
+    [Fact]
+    public void GetFieldType()
+    {
+        // Arrange
+        var stream = new MemoryStream(""u8.ToArray());
+        var reader = FixedLengthDataReader
+            .CreateBuilder()
+            .Build(stream, Encoding.UTF8);
+        // Act & Assert
+        reader.GetFieldType(0).Should().Be(typeof(string));
+    }
+
     public class GetValue
     {
         [Fact]
@@ -320,7 +332,6 @@ public class FixedLengthDataReaderTest
         // ReSharper disable AccessToDisposedClosure
         ((Action)(() => reader.GetName(0))).Should().Throw<NotSupportedException>();
         ((Action)(() => reader.GetDataTypeName(0))).Should().Throw<NotSupportedException>();
-        ((Action)(() => reader.GetFieldType(0))).Should().Throw<NotSupportedException>();
         ((Action)(() => reader.GetValues(new object[1]))).Should().Throw<NotSupportedException>();
         ((Action)(() => reader.GetBoolean(0))).Should().Throw<NotSupportedException>();
         ((Action)(() => reader.GetByte(0))).Should().Throw<NotSupportedException>();

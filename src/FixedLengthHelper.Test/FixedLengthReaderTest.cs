@@ -111,11 +111,7 @@ public class FixedLengthReaderTest
     }
 
     [Fact]
-#if NET48_OR_GREATER
-    public void GetField_WithInvalidTrim()
-#else
     public async Task GetField_WithInvalidTrim()
-#endif
     {
         // Arrange
         Mock<IByteStreamReader> byteStreamReader = new();
