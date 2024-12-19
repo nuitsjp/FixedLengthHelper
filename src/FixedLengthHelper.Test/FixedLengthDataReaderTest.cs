@@ -57,6 +57,19 @@ public class FixedLengthDataReaderTest
     }
 
     [Fact]
+    public void RecordsAffected()
+    {
+        // Arrange
+        var stream = new MemoryStream(""u8.ToArray());
+        using var reader = FixedLengthDataReader
+            .CreateBuilder()
+            .Build(stream, Encoding.UTF8);
+
+        // Act & Assert
+        reader.RecordsAffected.Should().Be(0);
+    }
+
+    [Fact]
     public void This_ByOrdinal()
     {
         // Arrange
@@ -182,6 +195,22 @@ public class FixedLengthDataReaderTest
         reader.GetOrdinal("Name").Should().Be(1);
         reader.GetOrdinal("Balance").Should().Be(2);
     }
+
+#if NET8_0_OR_GREATER
+    [Fact]
+    public async Task DisposeAsync()
+    {
+        // Arrange
+        var stream = new MemoryStream(""u8.ToArray());
+        var reader = FixedLengthDataReader
+            .CreateBuilder()
+            .Build(stream, Encoding.UTF8);
+        // Act & Assert
+        reader.IsClosed.Should().BeFalse();
+        await reader.DisposeAsync();
+        reader.IsClosed.Should().BeTrue();
+    }
+#endif
 
     [Fact]
     public void NotSupported()

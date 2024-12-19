@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace FixedLengthHelper;
 
@@ -44,6 +45,7 @@ public class ByteStreamReader : IByteStreamReader
     /// Checks if an async read operation is in progress.
     /// </summary>
     /// <exception cref="InvalidOperationException"></exception>
+    [ExcludeFromCodeCoverage]
     private void CheckAsyncTaskInProgress()
     {
         // If the task is not yet completed, throw an exception.

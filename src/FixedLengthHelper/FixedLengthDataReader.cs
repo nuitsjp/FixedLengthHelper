@@ -43,6 +43,7 @@ public class FixedLengthDataReader
     public int FieldCount => _columns.Count;
     public int Depth => 0;
     public bool IsClosed => _fixedLengthReader.IsClosed;
+    public int RecordsAffected => 0;
     public object this[int i] => GetValue(i);
 
     public object this[string name] => GetValue(GetOrdinal(name));
@@ -176,7 +177,5 @@ public class FixedLengthDataReader
 
     public bool Read()
         => _fixedLengthReader.Read();
-
-    public int RecordsAffected { get; }
     #endregion
 }
