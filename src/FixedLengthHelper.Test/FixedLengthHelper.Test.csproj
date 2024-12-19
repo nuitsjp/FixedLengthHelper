@@ -34,6 +34,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Update="FixedLengthDataReaderConfig.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	  <None Update="Sample.txt">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
