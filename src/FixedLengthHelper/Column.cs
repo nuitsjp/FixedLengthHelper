@@ -9,8 +9,3 @@ public record Column(
     char[]? TrimChars,
     // ReSharper disable once InconsistentNaming
     Func<string, bool> IsDBNull);
-
-public interface IIsDBNull
-{
-
-}
