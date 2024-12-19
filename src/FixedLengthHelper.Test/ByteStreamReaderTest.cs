@@ -86,9 +86,9 @@ public class ByteStreamReaderTest
         var content = first + newline + second + newline + third + newline + forth;
         var stream = new MemoryStream(encoding.GetBytes(content));
 #if NET48_OR_GREATER
-        using var reader = new ByteStreamReader(stream, bufferSize);
+        using IByteStreamReader reader = new ByteStreamReader(stream, bufferSize);
 #else
-        await using var reader = new ByteStreamReader(stream, bufferSize);
+        await using IByteStreamReader reader = new ByteStreamReader(stream, bufferSize);
 #endif
 
         // Act
@@ -96,14 +96,14 @@ public class ByteStreamReaderTest
         (await reader.ReadLineAsync()).Should().BeEquivalentTo(encoding.GetBytes(second));
         (await reader.ReadLineAsync()).Should().BeEquivalentTo(encoding.GetBytes(third));
         (await reader.ReadLineAsync()).Should().BeEquivalentTo(encoding.GetBytes(forth));
-        (await reader.ReadLineAsync()).Should().BeNull();
+        (await reader.ReadLineAsync(new CancellationTokenSource().Token)).Should().BeNull();
     }
 
     [Fact]
     public void CloseAndDispose()
     {
         var stream = new MemoryStream(Encoding.UTF8.GetBytes(string.Empty));
-        var reader = new ByteStreamReader(stream);
+        IByteStreamReader reader = new ByteStreamReader(stream);
 
         reader.Close();
         reader.Dispose();
@@ -116,7 +116,7 @@ public class ByteStreamReaderTest
     public async Task CloseAndDisposeAsync()
     {
         var stream = new MemoryStream(Encoding.UTF8.GetBytes(string.Empty));
-        var reader = new ByteStreamReader(stream);
+        IByteStreamReader reader = new ByteStreamReader(stream);
 
         reader.Close();
         await reader.DisposeAsync();
@@ -135,7 +135,7 @@ public class ByteStreamReaderTest
         streamMock.Setup(x => x.Close()).Throws(new Exception());
         
 
-        var reader = new ByteStreamReader(streamMock.Object);
+        IByteStreamReader reader = new ByteStreamReader(streamMock.Object);
 
         // Act
         var act = () => reader.Dispose();
@@ -149,7 +149,7 @@ public class ByteStreamReaderTest
     public async Task DisposeAsync()
     {
         var stream = new MemoryStream(Encoding.UTF8.GetBytes(string.Empty));
-        var reader = new ByteStreamReader(stream);
+        IByteStreamReader reader = new ByteStreamReader(stream);
 
         await reader.DisposeAsync();
 
@@ -165,7 +165,7 @@ public class ByteStreamReaderTest
         streamMock.Setup(x => x.DisposeAsync()).Throws(new Exception());
 
 
-        var reader = new ByteStreamReader(streamMock.Object);
+        IByteStreamReader reader = new ByteStreamReader(streamMock.Object);
 
         // Act
         var act = async () => await reader.DisposeAsync();

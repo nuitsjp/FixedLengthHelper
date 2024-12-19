@@ -4,7 +4,7 @@ namespace FixedLengthHelper;
 
 public class FixedLengthDataReaderBuilder
 {
-    private readonly List<Column> _columns = new();
+    private readonly List<Column> _columns = [];
 
     public FixedLengthDataReader Build(Stream stream, Encoding encoding)
     {

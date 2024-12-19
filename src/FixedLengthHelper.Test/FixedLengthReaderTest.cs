@@ -30,7 +30,7 @@ public class FixedLengthReaderTest
         byteStreamReader
             .Setup(x => x.ReadLine())
             .Returns(encoding.GetBytes(line));
-        using var reader = new FixedLengthReader(byteStreamReader.Object, encoding);
+        using IFixedLengthReader reader = new FixedLengthReader(byteStreamReader.Object, encoding);
 
         // Act & Assert
         reader.Read().Should().BeTrue();
@@ -55,9 +55,9 @@ public class FixedLengthReaderTest
             .Setup(x => x.ReadLineAsync())
             .ReturnsAsync(encoding.GetBytes(line));
 #if NET48_OR_GREATER
-        using var reader = new FixedLengthReader(byteStreamReader.Object, encoding);
+        using IFixedLengthReader reader = new FixedLengthReader(byteStreamReader.Object, encoding);
 #else
-        await using var reader = new FixedLengthReader(byteStreamReader.Object, encoding);
+        await using IFixedLengthReader reader = new FixedLengthReader(byteStreamReader.Object, encoding);
 #endif
 
         // Act & Assert
@@ -80,7 +80,7 @@ public class FixedLengthReaderTest
         byteStreamReader
             .Setup(x => x.ReadLine())
             .Returns(encoding.GetBytes(line));
-        using var reader = new FixedLengthReader(byteStreamReader.Object, encoding);
+        using IFixedLengthReader reader = new FixedLengthReader(byteStreamReader.Object, encoding);
 
         // Act & Assert
         reader.Read().Should().BeTrue();
@@ -103,7 +103,7 @@ public class FixedLengthReaderTest
     public void Constructor_FromFile()
     {
         // Arrange
-        var reader = new FixedLengthReader("Sample.txt", Encoding.UTF8);
+        IFixedLengthReader reader = new FixedLengthReader("Sample.txt", Encoding.UTF8);
 
         // Act & Assert
         reader.Read().Should().BeTrue();
@@ -119,9 +119,9 @@ public class FixedLengthReaderTest
             .Setup(x => x.ReadLine())
             .Returns("hello"u8.ToArray());
 #if NET48_OR_GREATER
-        using var reader = new FixedLengthReader(byteStreamReader.Object, Encoding.UTF8);
+        using IFixedLengthReader reader = new FixedLengthReader(byteStreamReader.Object, Encoding.UTF8);
 #else
-        await using var reader = new FixedLengthReader(byteStreamReader.Object, Encoding.UTF8);
+        await using IFixedLengthReader reader = new FixedLengthReader(byteStreamReader.Object, Encoding.UTF8);
 #endif
 
         // Act
@@ -145,10 +145,11 @@ public class FixedLengthReaderTest
         byteStreamReader
             .Setup(x => x.ReadLine())
             .Returns(encoding.GetBytes(line));
-        using var reader = new FixedLengthReader(byteStreamReader.Object, encoding);
+        using IFixedLengthReader reader = new FixedLengthReader(byteStreamReader.Object, encoding);
 
         // Act & Assert
         reader.Read().Should().BeTrue();
+        // ReSharper disable once AccessToDisposedClosure
         var act = () => reader.GetField(offset, length);
         act.Should().Throw<ArgumentOutOfRangeException>();
     }

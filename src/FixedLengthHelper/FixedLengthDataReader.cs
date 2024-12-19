@@ -1,5 +1,4 @@
 ﻿using System.Data;
-using System.Xml.Linq;
 
 namespace FixedLengthHelper;
 
@@ -9,13 +8,13 @@ public class FixedLengthDataReader
         , IAsyncDisposable
 #endif
 {
-    private readonly FixedLengthReader _fixedLengthReader;
+    private readonly IFixedLengthReader _fixedLengthReader;
     private readonly IReadOnlyDictionary<string, int> _columnOrdinals;
     private readonly IReadOnlyList<Column> _columns;
     private bool _isDisposed;
 
     public FixedLengthDataReader(
-        FixedLengthReader fixedLengthReader,
+        IFixedLengthReader fixedLengthReader,
         FixedLengthDataReaderConfig config)
     {
         _fixedLengthReader = fixedLengthReader;
@@ -221,7 +220,7 @@ public class FixedLengthDataReader
     }
 
     /// <inheritdoc />
-    public DataTable? GetSchemaTable()
+    public DataTable GetSchemaTable()
     {
         throw new NotSupportedException();
     }
