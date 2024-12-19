@@ -15,6 +15,7 @@ public class FixedLengthDataReaderTest
     [Fact]
     public void GetValue()
     {
+        // Arrange
         var stream = new MemoryStream(
             """
             00554Pedro Gomez          123423006022004
@@ -22,6 +23,8 @@ public class FixedLengthDataReaderTest
             00112Ramiro Politti       000000001022000
             00924Pablo Ramirez        033213024112002
             """u8.ToArray());
+
+        // Act
         using var reader = FixedLengthDataReader
             .CreateBuilder()
             .AddColumn(0, 5)
@@ -29,6 +32,7 @@ public class FixedLengthDataReaderTest
             .AddColumn(26, 15)
             .Build(stream, Encoding.UTF8);
 
+        // Assert
         reader.Read().Should().BeTrue();
         reader.GetValue(0).Should().Be("00554");
         reader.GetValue(1).Should().Be("Pedro Gomez          ");
