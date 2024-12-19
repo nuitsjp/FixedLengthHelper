@@ -232,17 +232,15 @@ public class FixedLengthDataReaderTest
         {
             // Arrange
             var stream = new MemoryStream(
-                """
-                                              123423006022004
-                    """u8.ToArray());
+                "                          123423006022004"u8.ToArray());
 
             // Act
             using var reader = FixedLengthDataReader
                 .CreateBuilder()
                 .AddColumn(0, 5, TrimMode.Trim, isEmptyNull: true)
                 .AddColumn(5, 21, TrimMode.Trim)
-                .AddColumn(26, 10, s => true)
-                .AddColumn("Balance", 36, 5, s => true)
+                .AddColumn(26, 10, _ => true)
+                .AddColumn("Balance", 36, 5, _ => true)
                 .Build(stream, Encoding.UTF8);
 
             // Assert
@@ -258,9 +256,7 @@ public class FixedLengthDataReaderTest
         {
             // Arrange
             var stream = new MemoryStream(
-                """
-                    00554Pedro Gomez          123423006022004
-                    """u8.ToArray());
+                "00554Pedro Gomez          123423006022004"u8.ToArray());
             using var reader = FixedLengthDataReader
                 .CreateBuilder()
                 .Build(stream, Encoding.UTF8);
@@ -353,17 +349,15 @@ public class FixedLengthDataReaderTest
         {
             // Arrange
             var stream = new MemoryStream(
-                """
-                                              123423006022004
-                    """u8.ToArray());
+                "                          123423006022004"u8.ToArray());
 
             // Act
             using var reader = FixedLengthDataReader
                 .CreateBuilder()
                 .AddColumn(0, 5, TrimMode.Trim, isEmptyNull: true)
                 .AddColumn(5, 21, TrimMode.Trim)
-                .AddColumn(26, 10, s => true)
-                .AddColumn("Balance", 36, 5, s => true)
+                .AddColumn(26, 10, _ => true)
+                .AddColumn("Balance", 36, 5, _ => true)
                 .Build(stream, Encoding.UTF8);
 
             // Assert
@@ -379,9 +373,7 @@ public class FixedLengthDataReaderTest
         {
             // Arrange
             var stream = new MemoryStream(
-                """
-                    00554Pedro Gomez          123423006022004
-                    """u8.ToArray());
+                "00554Pedro Gomez          123423006022004"u8.ToArray());
             using var reader = FixedLengthDataReader
                 .CreateBuilder()
                 .Build(stream, Encoding.UTF8);

@@ -1,9 +1,11 @@
-﻿using System.Text;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using FluentAssertions;
 using Moq;
 
 namespace FixedLengthHelper.Test;
 
+[SuppressMessage("Performance", "CA1859:可能な場合は具象型を使用してパフォーマンスを向上させる")]
 public class FixedLengthReaderTest
 {
 #if NET8_0_OR_GREATER

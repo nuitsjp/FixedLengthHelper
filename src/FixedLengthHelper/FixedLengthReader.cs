@@ -7,7 +7,7 @@ namespace FixedLengthHelper;
 /// </summary>
 /// <param name="byteStreamReader"></param>
 /// <param name="encoding"></param>
-public class FixedLengthReader(
+public sealed class FixedLengthReader(
     IByteStreamReader byteStreamReader, 
     Encoding encoding) 
     : IFixedLengthReader
@@ -81,7 +81,19 @@ public class FixedLengthReader(
     /// </summary>
     public void Dispose()
     {
-        byteStreamReader.Dispose();
+        Dispose(true);
+    }
+    
+    /// <summary>
+    /// Closes the FixedLengthReader.
+    /// </summary>
+    /// <param name="disposing"></param>
+    private void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            byteStreamReader.Dispose();
+        }
     }
 
 #if NET8_0_OR_GREATER

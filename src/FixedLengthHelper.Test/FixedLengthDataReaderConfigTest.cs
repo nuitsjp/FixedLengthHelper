@@ -3,40 +3,40 @@ using FluentAssertions;
 
 namespace FixedLengthHelper.Test;
 
-public class FixedLengthDataReaderConfigTest
+public static class FixedLengthDataReaderConfigTest
 {
     public class Parse
     {
         [Fact]
         public void Normality()
         {
-            var json = """
-                   {
-                     "Columns": {
-                       "Id": {
-                         "Ordinal": 0,
-                         "Offset": 0,
-                         "Length": 5,
-                         "TrimMode": "TrimStart",
-                         "TrimChars": " 0123",
-                         "IsEmptyNull": true
-                       },
-                       "Name": {
-                         "Ordinal": 1,
-                         "Offset": 5,
-                         "Length": 10,
-                         "TrimMode": "TrimEnd"
-                       },
-                       "Description": {
-                         "Ordinal": 2,
-                         "Offset": 15,
-                         "Length": 20,
-                         "TrimMode": "Trim",
-                         "IsEmptyNull": false
-                       }
-                     }
-                   }
-                   """;
+            const string json = """
+                                {
+                                  "Columns": {
+                                    "Id": {
+                                      "Ordinal": 0,
+                                      "Offset": 0,
+                                      "Length": 5,
+                                      "TrimMode": "TrimStart",
+                                      "TrimChars": " 0123",
+                                      "IsEmptyNull": true
+                                    },
+                                    "Name": {
+                                      "Ordinal": 1,
+                                      "Offset": 5,
+                                      "Length": 10,
+                                      "TrimMode": "TrimEnd"
+                                    },
+                                    "Description": {
+                                      "Ordinal": 2,
+                                      "Offset": 15,
+                                      "Length": 20,
+                                      "TrimMode": "Trim",
+                                      "IsEmptyNull": false
+                                    }
+                                  }
+                                }
+                                """;
 
             var config = FixedLengthDataReaderConfig.Deserialize(json);
 
@@ -75,7 +75,7 @@ public class FixedLengthDataReaderConfigTest
         [Fact]
         public void InvalidJson()
         {
-            var json = "invalid json";
+            const string json = "invalid json";
             Action act = () => FixedLengthDataReaderConfig.Deserialize(json);
             act.Should().Throw<JsonException>();
         }
@@ -83,7 +83,7 @@ public class FixedLengthDataReaderConfigTest
         [Fact]
         public void MissingColumns()
         {
-            var json = "{}";
+            const string json = "{}";
             Action act = () => FixedLengthDataReaderConfig.Deserialize(json);
             act.Should().Throw<InvalidOperationException>();
         }

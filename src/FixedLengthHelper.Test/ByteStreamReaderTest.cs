@@ -1,9 +1,12 @@
-﻿using System.Text;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using FluentAssertions;
 using Moq;
 
 namespace FixedLengthHelper.Test;
 
+[SuppressMessage("Performance", "CA1859:可能な場合は具象型を使用してパフォーマンスを向上させる")]
+[SuppressMessage("Performance", "CA1806:メソッドの結果を無視しない")]
 public class ByteStreamReaderTest
 {
 #if NET8_0_OR_GREATER
@@ -40,7 +43,7 @@ public class ByteStreamReaderTest
         var encoding = Encoding.GetEncoding(encodingName);
         var first = new string('あ', 8000);
         var second = new string('A', 4096);
-        var third = "123";
+        const string third = "123";
         var forth = new string('B', 100);
         var content = first + newline + second + newline + third + newline + forth;
         var stream = new MemoryStream(encoding.GetBytes(content));
@@ -81,7 +84,7 @@ public class ByteStreamReaderTest
         var encoding = Encoding.GetEncoding(encodingName);
         var first = new string('あ', 8000);
         var second = new string('A', 4096);
-        var third = "123";
+        const string third = "123";
         var forth = new string('B', 100);
         var content = first + newline + second + newline + third + newline + forth;
         var stream = new MemoryStream(encoding.GetBytes(content));

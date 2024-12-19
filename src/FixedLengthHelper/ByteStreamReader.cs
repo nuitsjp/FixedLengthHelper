@@ -7,8 +7,12 @@ namespace FixedLengthHelper;
 /// </summary>
 public class ByteStreamReader : IByteStreamReader
 {
+    // ReSharper disable MemberCanBePrivate.Global
+    // ReSharper disable ConvertToConstant.Global
     public static readonly int DefaultBufferSize = 4096;  // Byte buffer size
     public static readonly int MinBufferSize = 128;
+    // ReSharper restore ConvertToConstant.Global
+    // ReSharper restore MemberCanBePrivate.Global
 
     /// <summary>
     /// Source stream.
@@ -231,7 +235,7 @@ public class ByteStreamReader : IByteStreamReader
     {
         CheckAsyncTaskInProgress();
 
-        Task<byte[]?> task = ReadLineAsyncInner(cancellationToken);
+        var task = ReadLineAsyncInner(cancellationToken);
         _asyncReadTask = task;
 
         return new ValueTask<byte[]?>(task);

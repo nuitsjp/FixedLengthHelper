@@ -58,18 +58,15 @@ public class FixedLengthDataReader
     /// <inheritdoc />
     public object GetValue(int i)
     {
-        if (i < _columns.Count)
-        {
-            var column = _columns[i];
-            var value = column.TrimChars is null 
-                ? _fixedLengthReader.GetField(column.OffsetBytes, column.LengthBytes, column.TrimMode) 
-                : _fixedLengthReader.GetField(column.OffsetBytes, column.LengthBytes, column.TrimMode, column.TrimChars);
-            return column.IsDBNull(value)
-                ? DBNull.Value
-                : value;
-        }
-
-        throw new IndexOutOfRangeException($"Field with ordinal '{i}' was not found.");
+        if (_columns.Count <= i) throw new IndexOutOfRangeException($"Field with ordinal '{i}' was not found.");
+        
+        var column = _columns[i];
+        var value = column.TrimChars is null 
+            ? _fixedLengthReader.GetField(column.OffsetBytes, column.LengthBytes, column.TrimMode) 
+            : _fixedLengthReader.GetField(column.OffsetBytes, column.LengthBytes, column.TrimMode, column.TrimChars);
+        return column.IsDBNull(value)
+            ? DBNull.Value
+            : value;
     }
 
     /// <inheritdoc />
@@ -86,8 +83,15 @@ public class FixedLengthDataReader
             return;
         }
         _isDisposed = true;
+        Dispose(true);
+    }
 
-        _fixedLengthReader.Dispose();
+    private void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            _fixedLengthReader.Dispose();
+        }
     }
 
 #if NET8_0_OR_GREATER
@@ -219,16 +223,13 @@ public class FixedLengthDataReader
     /// <inheritdoc />
     public bool IsDBNull(int i)
     {
-        if (i < _columns.Count)
-        {
-            var column = _columns[i];
-            var value = column.TrimChars is null
-                ? _fixedLengthReader.GetField(column.OffsetBytes, column.LengthBytes, column.TrimMode)
-                : _fixedLengthReader.GetField(column.OffsetBytes, column.LengthBytes, column.TrimMode, column.TrimChars);
-            return column.IsDBNull(value);
-        }
-
-        throw new IndexOutOfRangeException($"Field with ordinal '{i}' was not found.");
+        if (_columns.Count <= i) throw new IndexOutOfRangeException($"Field with ordinal '{i}' was not found.");
+        
+        var column = _columns[i];
+        var value = column.TrimChars is null
+            ? _fixedLengthReader.GetField(column.OffsetBytes, column.LengthBytes, column.TrimMode)
+            : _fixedLengthReader.GetField(column.OffsetBytes, column.LengthBytes, column.TrimMode, column.TrimChars);
+        return column.IsDBNull(value);
     }
 
     /// <inheritdoc />

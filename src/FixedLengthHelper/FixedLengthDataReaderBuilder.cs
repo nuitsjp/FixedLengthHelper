@@ -23,6 +23,7 @@ public class FixedLengthDataReaderBuilder
     public FixedLengthDataReaderBuilder AddColumn(int offsetBytes, int lengthBytes, TrimMode trimMode, char[]? trimChars = null, bool isEmptyNull = false)
         => AddColumn(offsetBytes, lengthBytes, trimMode, trimChars, s => isEmptyNull && string.IsNullOrEmpty(s));
 
+    // ReSharper disable once MemberCanBePrivate.Global
     public FixedLengthDataReaderBuilder AddColumn(int offsetBytes, int lengthBytes, TrimMode trimMode, char[]? trimChars, Func<string, bool> isDbNull)
         => AddColumn(null, offsetBytes, lengthBytes, trimMode, trimChars, isDbNull);
 
@@ -33,9 +34,11 @@ public class FixedLengthDataReaderBuilder
         => AddColumn(name, offsetBytes, lengthBytes, TrimMode.None, null, isDbNull);
 
 
+    // ReSharper disable once MemberCanBePrivate.Global
     public FixedLengthDataReaderBuilder AddColumn(string? name, int offsetBytes, int lengthBytes, TrimMode trimMode, char[]? trimChars = null, bool isEmptyNull = false)
         => AddColumn(name, offsetBytes, lengthBytes, trimMode, trimChars, s => isEmptyNull && string.IsNullOrEmpty(s));
 
+    // ReSharper disable once MemberCanBePrivate.Global
     public FixedLengthDataReaderBuilder AddColumn(string? name, int offsetBytes, int lengthBytes, TrimMode trimMode, char[]? trimChars, Func<string, bool> isDbNull)
     {
         _columns.Add(new Column(_columns.Count, name, offsetBytes, lengthBytes, trimMode, trimChars, isDbNull));

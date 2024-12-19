@@ -9,6 +9,14 @@ namespace FixedLengthHelper;
 public record FixedLengthDataReaderConfig(IReadOnlyList<Column> Columns)
 {
     /// <summary>
+    /// Options for JsonSerializer.
+    /// </summary>
+    private static readonly JsonSerializerOptions Options = new()
+    {
+        PropertyNameCaseInsensitive = true
+    };
+    
+    /// <summary>
     /// Deserializes the JSON string to FixedLengthDataReaderConfig.
     /// </summary>
     /// <param name="json"></param>
@@ -16,12 +24,7 @@ public record FixedLengthDataReaderConfig(IReadOnlyList<Column> Columns)
     /// <exception cref="InvalidOperationException"></exception>
     public static FixedLengthDataReaderConfig Deserialize(string json)
     {
-        var options = new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        };
-
-        var jsonObject = JsonSerializer.Deserialize<JsonObject>(json, options);
+        var jsonObject = JsonSerializer.Deserialize<JsonObject>(json, Options);
         if (jsonObject?.Columns == null) throw new InvalidOperationException("Invalid JSON structure");
 
         var columns = jsonObject.Columns.Select(kvp =>
