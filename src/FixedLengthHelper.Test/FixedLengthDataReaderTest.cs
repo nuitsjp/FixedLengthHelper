@@ -303,6 +303,7 @@ public class FixedLengthDataReaderTest
         reader.IsClosed.Should().BeFalse();
         await reader.DisposeAsync();
         reader.IsClosed.Should().BeTrue();
+        await reader.DisposeAsync();
     }
 #endif
 
