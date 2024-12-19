@@ -29,7 +29,7 @@ Install-Package FixedLengthHelper
 using System.Text；
 FixedLengthHelper；
 
-var reader = new FixedLengthReader(「Sample.txt」, Encoding.UTF8)；
+var reader = new FixedLengthReader("Sample.txt", Encoding.UTF8)；
 
 while (await reader.ReadAsync())
 {
