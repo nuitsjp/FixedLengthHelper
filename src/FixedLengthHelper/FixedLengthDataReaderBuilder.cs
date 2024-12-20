@@ -11,6 +11,11 @@ public class FixedLengthDataReaderBuilder
     /// Columns.
     /// </summary>
     private readonly List<Column> _columns = [];
+    
+    /// <summary>
+    /// Columns.
+    /// </summary>
+    public IReadOnlyList<Column> Columns => _columns;
 
     /// <summary>
     /// Builds a FixedLengthDataReader.
