@@ -17,15 +17,14 @@ public class FixedLengthBulkCopierBuilderTest
     [Fact]
     public async Task Test1()
     {
-        var sqlBulkCopier = FixedLengthBulkCopierBuilder.CreateBuilder("[SalesLT].[SalesOrderDetail]")
-            .AddColumnMapping("SalesOrderID", builder => builder.AddColumn(0, 10))
-            .AddColumnMapping("SalesOrderDetailID", builder => builder.AddColumn(10, 10))
-            .AddColumnMapping("OrderQty", builder => builder.AddColumn(20, 5))
-            .AddColumnMapping("ProductID", builder => builder.AddColumn(25, 10))
-            .AddColumnMapping("UnitPrice", builder => builder.AddColumn(35, 15))
-            .AddColumnMapping("UnitPriceDiscount", builder => builder.AddColumn(50, 15))
-            .AddColumnMapping("LineTotal", builder => builder.AddColumn(65, 20))
-            .AddColumnMapping("ModifiedDate", builder => builder.AddColumn(85, 20))
+        var sqlBulkCopier = FixedLengthBulkCopierBuilder.CreateBuilder("[SalesLT].[SalesOrderDetail2]")
+            .AddColumnMapping("SalesOrderID", 0, 10)
+            .AddColumnMapping("SalesOrderDetailID", 10, 10)
+            .AddColumnMapping("OrderQty", 20, 5)
+            .AddColumnMapping("ProductID", 25, 10)
+            .AddColumnMapping("UnitPrice", 35, 15)
+            .AddColumnMapping("UnitPriceDiscount", 50, 15)
+            .AddColumnMapping("ModifiedDate", 85, 20)
             .Build();
 
         await using SqlConnection sqlConnection = new(ConnectionString);
@@ -81,5 +80,39 @@ public class FixedLengthBulkCopierBuilderTest
                 }
             }
         }
+    }
+
+    [Fact]
+    public async Task Foo()
+    {
+        await using SqlConnection sqlConnection = new(ConnectionString);
+        await sqlConnection.OpenAsync();
+        SalesOrderDetail[] details =
+        [
+            new() { SalesOrderID = 71774 },
+            new() { SalesOrderID = 71776 }
+        ];
+        await BulkInsertAsync(sqlConnection, details);
+    }
+
+    public static async ValueTask<int> BulkInsertAsync<T>(SqlConnection connection, IEnumerable<T> data, SqlBulkCopyOptions options = default, int? timeout = null, CancellationToken cancellationToken = default)
+    {
+        using (var executor = new SqlBulkCopy(connection, options, null))
+        {
+            // テーブル名と型名が一致しているとする
+            executor.DestinationTableName = "SalesLT.SalesOrderDetail";
+
+            // データを流し込む
+            using (var reader = new SqlBulkCopyDataReader<T>(data))
+                await executor.WriteToServerAsync(reader, cancellationToken);
+
+            // 影響した行数 (= 流し込んだ件数) を返すのが一般的
+            return executor.RowsCopied;
+        }
+    }
+
+    public class SalesOrderDetail
+    {
+        public int SalesOrderID { get; set; }
     }
 }

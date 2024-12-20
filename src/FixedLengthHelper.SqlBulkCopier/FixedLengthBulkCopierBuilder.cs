@@ -9,12 +9,14 @@ public interface ISqlBulkCopier
 }
 
 public class SqlBulkCopier(
+    string destinationTableName,
     FixedLengthDataReaderBuilder fixedLengthDataReaderBuilder,
     Dictionary<string, Column> columns) : ISqlBulkCopier
 {
     public async Task WriteToServerAsync(SqlConnection connection, Stream stream, Encoding encoding)
     {
         using var sqlBulkCopy = new SqlBulkCopy(connection);
+        sqlBulkCopy.DestinationTableName = destinationTableName;
         foreach (var column in columns)
         {
             sqlBulkCopy.ColumnMappings.Add(column.Key, column.Value.Ordinal);
@@ -24,25 +26,33 @@ public class SqlBulkCopier(
         await sqlBulkCopy.WriteToServerAsync(dataReader);
     }
 }
-public class FixedLengthBulkCopierBuilder
+public class FixedLengthBulkCopierBuilder(
+    string destinationTableName)
 {
-    public static FixedLengthBulkCopierBuilder CreateBuilder(string tableName) => new();
-    
+    public static FixedLengthBulkCopierBuilder CreateBuilder(string destinationTableName) => new(destinationTableName);
+
     private readonly FixedLengthDataReaderBuilder _fixedLengthDataReaderBuilder = new();
     
     private readonly Dictionary<string, Column> _columns = new();
-    
-    public FixedLengthBulkCopierBuilder AddColumnMapping(string columnName, Action<FixedLengthDataReaderBuilder> addColumn)
+
+    public FixedLengthBulkCopierBuilder AddColumnMapping(string dbColumnName, int offsetBytes, int lengthBytes)
+        => AddColumnMapping(dbColumnName, offsetBytes, lengthBytes, TrimMode.None);
+    public FixedLengthBulkCopierBuilder AddColumnMapping(string dbColumnName, int offsetBytes, int lengthBytes, Func<string, bool> isDbNull)
+        => AddColumnMapping(dbColumnName, offsetBytes, lengthBytes, TrimMode.None, null, isDbNull);
+    public FixedLengthBulkCopierBuilder AddColumnMapping(string dbColumnName, int offsetBytes, int lengthBytes, TrimMode trimMode, char[]? trimChars = null, bool isEmptyNull = false)
+        => AddColumnMapping(dbColumnName, offsetBytes, lengthBytes, trimMode, trimChars, s => isEmptyNull && string.IsNullOrEmpty(s));
+
+    public FixedLengthBulkCopierBuilder AddColumnMapping(string dbColumnName, int offsetBytes, int lengthBytes, TrimMode trimMode, char[]? trimChars, Func<string, bool> isDbNull)
     {
-        addColumn(_fixedLengthDataReaderBuilder);
+        _fixedLengthDataReaderBuilder.AddColumn(dbColumnName, offsetBytes, lengthBytes, trimMode, trimChars, isDbNull);
         var latestColumn = _fixedLengthDataReaderBuilder.Columns[^1];
-        _columns[columnName] = latestColumn with { Name = columnName };;
+        _columns[dbColumnName] = latestColumn;
         return this;
     }
-    
+
     public ISqlBulkCopier Build()
     {
-        return new SqlBulkCopier(_fixedLengthDataReaderBuilder, _columns);
+        return new SqlBulkCopier(destinationTableName, _fixedLengthDataReaderBuilder, _columns);
     }
 
 }
