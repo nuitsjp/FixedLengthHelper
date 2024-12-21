@@ -88,9 +88,7 @@ public class FixedLengthDataReader
         if (_columns.Count <= i) throw new IndexOutOfRangeException($"Field with ordinal '{i}' was not found.");
         
         var column = _columns[i];
-        var value = column.TrimChars is null 
-            ? _fixedLengthReader.GetField(column.OffsetBytes, column.LengthBytes, column.TrimMode) 
-            : _fixedLengthReader.GetField(column.OffsetBytes, column.LengthBytes, column.TrimMode, column.TrimChars);
+        var value = _fixedLengthReader.GetField(column.OffsetBytes, column.LengthBytes, column.TrimMode, column.TrimChars);
         return column.IsDBNull(value)
             ? DBNull.Value
             : value;
@@ -253,9 +251,7 @@ public class FixedLengthDataReader
         if (_columns.Count <= i) throw new IndexOutOfRangeException($"Field with ordinal '{i}' was not found.");
         
         var column = _columns[i];
-        var value = column.TrimChars is null
-            ? _fixedLengthReader.GetField(column.OffsetBytes, column.LengthBytes, column.TrimMode)
-            : _fixedLengthReader.GetField(column.OffsetBytes, column.LengthBytes, column.TrimMode, column.TrimChars);
+        var value = _fixedLengthReader.GetField(column.OffsetBytes, column.LengthBytes, column.TrimMode, column.TrimChars);
         return column.IsDBNull(value);
     }
 

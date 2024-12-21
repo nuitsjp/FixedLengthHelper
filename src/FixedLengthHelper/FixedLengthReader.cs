@@ -58,7 +58,7 @@ public sealed class FixedLengthReader(
     /// <param name="trimChars">Characters to trim.</param>
     /// <returns></returns>
     /// <exception cref="ArgumentException"></exception>
-    public string GetField(int offsetBytes, int lengthBytes, TrimMode trimMode = TrimMode.None, params char[] trimChars)
+    public string GetField(int offsetBytes, int lengthBytes, TrimMode trimMode = TrimMode.None, params char[]? trimChars)
     {
         var span = _currentLine.AsSpan(offsetBytes, lengthBytes);
 #if NET48_OR_GREATER
