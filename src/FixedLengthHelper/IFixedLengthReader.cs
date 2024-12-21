@@ -31,8 +31,6 @@ public interface IFixedLengthReader : IDisposable, IAsyncDisposable
     /// </summary>
     /// <param name="offsetBytes"></param>
     /// <param name="lengthBytes"></param>
-    /// <param name="trimMode"></param>
-    /// <param name="trimChars"></param>
     /// <returns></returns>
-    string GetField(int offsetBytes, int lengthBytes, TrimMode trimMode = TrimMode.None, params char[]? trimChars);
+    string GetField(int offsetBytes, int lengthBytes);
 }

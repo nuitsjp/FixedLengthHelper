@@ -67,40 +67,6 @@ public class FixedLengthReaderTest
         reader.GetField(encoding.GetBytes(offset).Length, encoding.GetBytes(expected).Length).Should().Be(expected);
     }
 
-    [Theory]
-    [InlineData("Shift_JIS", "01  456  9", null, null, "  456  ")]
-    [InlineData("Shift_JIS", "01  456  9", TrimMode.None, null, "  456  ")]
-    [InlineData("Shift_JIS", "01  456  9", TrimMode.Trim, null, "456")]
-    [InlineData("Shift_JIS", "01  456  9", TrimMode.TrimStart, null, "456  ")]
-    [InlineData("Shift_JIS", "01  456  9", TrimMode.TrimEnd, null, "  456")]
-    [InlineData("Shift_JIS", "01xy456z09", TrimMode.Trim, new[]{'x', 'y', 'z', '0'}, "456")]
-    public void GetField_WithTrim(string encodingName, string line, TrimMode? trimMode, char[]? trimChars, string expected)
-    {
-        // Arrange
-        var encoding = Encoding.GetEncoding(encodingName);
-        Mock<IByteStreamReader> byteStreamReader = new();
-        byteStreamReader
-            .Setup(x => x.ReadLine())
-            .Returns(encoding.GetBytes(line));
-        using IFixedLengthReader reader = new FixedLengthReader(byteStreamReader.Object, encoding);
-
-        // Act & Assert
-        reader.Read().Should().BeTrue();
-        if (trimMode is null && trimChars is null)
-        {
-            reader.GetField(2, 7).Should().Be(expected);
-        }
-        else if (trimChars is null)
-        {
-            reader.GetField(2, 7, trimMode!.Value).Should().Be(expected);
-        }
-        else
-        {
-            reader.GetField(2, 7, trimMode!.Value, trimChars).Should().Be(expected);
-        }
-    }
-
-
     [Fact]
     public void Constructor_FromFile()
     {
@@ -109,30 +75,7 @@ public class FixedLengthReaderTest
 
         // Act & Assert
         reader.Read().Should().BeTrue();
-        reader.GetField(0, 5, TrimMode.TrimStart, '0').Should().Be("554");
-    }
-
-    [Fact]
-    public async Task GetField_WithInvalidTrim()
-    {
-        // Arrange
-        Mock<IByteStreamReader> byteStreamReader = new();
-        byteStreamReader
-            .Setup(x => x.ReadLine())
-            .Returns("hello"u8.ToArray());
-#if NET48_OR_GREATER
-        using IFixedLengthReader reader = new FixedLengthReader(byteStreamReader.Object, Encoding.UTF8);
-#else
-        await using IFixedLengthReader reader = new FixedLengthReader(byteStreamReader.Object, Encoding.UTF8);
-#endif
-
-        // Act
-        (await reader.ReadAsync()).Should().BeTrue();
-        // ReSharper disable once AccessToDisposedClosure
-        var act = () => reader.GetField(1, 2, (TrimMode)9);
-
-        // Assert
-        act.Should().Throw<ArgumentException>();
+        reader.GetField(0, 5).Should().Be("00554");
     }
 
     [Theory]

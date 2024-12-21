@@ -54,26 +54,16 @@ public sealed class FixedLengthReader(
     /// </summary>
     /// <param name="offsetBytes">Offset in lengthBytes from the beginning of the line. </param>
     /// <param name="lengthBytes">Length of the field in bytes.</param>
-    /// <param name="trimMode">Trim mode.</param>
-    /// <param name="trimChars">Characters to trim.</param>
     /// <returns></returns>
     /// <exception cref="ArgumentException"></exception>
-    public string GetField(int offsetBytes, int lengthBytes, TrimMode trimMode = TrimMode.None, params char[]? trimChars)
+    public string GetField(int offsetBytes, int lengthBytes)
     {
         var span = _currentLine.AsSpan(offsetBytes, lengthBytes);
 #if NET48_OR_GREATER
-        var field = encoding.GetString(span.ToArray());
+        return encoding.GetString(span.ToArray());
 #else
-        var field = encoding.GetString(span);
+        return encoding.GetString(span);
 #endif
-        return trimMode switch
-        {
-            TrimMode.None => field,
-            TrimMode.Trim => field.Trim(trimChars),
-            TrimMode.TrimStart => field.TrimStart(trimChars),
-            TrimMode.TrimEnd => field.TrimEnd(trimChars),
-            _ => throw new ArgumentException("Invalid TrimMode", nameof(trimMode))
-        };
     }
 
     /// <summary>

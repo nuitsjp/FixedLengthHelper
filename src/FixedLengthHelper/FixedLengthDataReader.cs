@@ -88,10 +88,18 @@ public class FixedLengthDataReader
         if (_columns.Count <= i) throw new IndexOutOfRangeException($"Field with ordinal '{i}' was not found.");
         
         var column = _columns[i];
-        var value = _fixedLengthReader.GetField(column.OffsetBytes, column.LengthBytes, column.TrimMode, column.TrimChars);
-        return column.IsDBNull(value)
+        var value = _fixedLengthReader.GetField(column.OffsetBytes, column.LengthBytes);
+        var trimValue = column.TrimMode switch
+        {
+            TrimMode.None => value,
+            TrimMode.Trim => value.Trim(column.TrimChars),
+            TrimMode.TrimStart => value.TrimStart(column.TrimChars),
+            TrimMode.TrimEnd => value.TrimEnd(column.TrimChars),
+            _ => throw new ArgumentOutOfRangeException()
+        };
+        return column.IsDBNull(trimValue)
             ? DBNull.Value
-            : value;
+            : trimValue;
     }
 
     /// <inheritdoc />
@@ -251,8 +259,16 @@ public class FixedLengthDataReader
         if (_columns.Count <= i) throw new IndexOutOfRangeException($"Field with ordinal '{i}' was not found.");
         
         var column = _columns[i];
-        var value = _fixedLengthReader.GetField(column.OffsetBytes, column.LengthBytes, column.TrimMode, column.TrimChars);
-        return column.IsDBNull(value);
+        var value = _fixedLengthReader.GetField(column.OffsetBytes, column.LengthBytes);
+        var trimValue = column.TrimMode switch
+        {
+            TrimMode.None => value,
+            TrimMode.Trim => value.Trim(column.TrimChars),
+            TrimMode.TrimStart => value.TrimStart(column.TrimChars),
+            TrimMode.TrimEnd => value.TrimEnd(column.TrimChars),
+            _ => throw new ArgumentOutOfRangeException()
+        };
+        return column.IsDBNull(trimValue);
     }
 
     /// <inheritdoc />
