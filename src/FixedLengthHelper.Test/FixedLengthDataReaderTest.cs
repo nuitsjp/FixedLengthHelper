@@ -201,7 +201,7 @@ public class FixedLengthDataReaderTest
             // Act
             using var reader = FixedLengthDataReader
                 .CreateBuilder()
-                .AddColumn("0", 0, 5, c => c.Trim(emptyIsNull: true))
+                .AddColumn("0", 0, 5, c => c.Trim().TreatEmptyStringAsNull())
                 .AddColumn("1", 5, 21, c => c.Trim())
                 .AddColumn("2", 26, 10, c => c.Convert(s => DBNull.Value))
                 .AddColumn("3", 36, 5, c => c.Convert(s => DBNull.Value))

@@ -21,27 +21,30 @@ public class ColumnOptions(int ordinal, string name, int offsetBytes, int length
         return this;
     }
 
-    public ColumnOptions Trim(char[]? trimChars = null, bool emptyIsNull = false)
+    public ColumnOptions Trim(char[]? trimChars = null)
     {
         TrimMode = FixedLengthHelper.TrimMode.Trim;
         TrimChars = trimChars;
-        EmptyIsNull = emptyIsNull;
         return this;
     }
 
-    public ColumnOptions TrimStart(char[]? trimChars = null, bool emptyIsNull = false)
+    public ColumnOptions TrimStart(char[]? trimChars = null)
     {
         TrimMode = FixedLengthHelper.TrimMode.TrimStart;
         TrimChars = trimChars;
-        EmptyIsNull = emptyIsNull;
         return this;
     }
 
-    public ColumnOptions TrimEnd(char[]? trimChars = null, bool emptyIsNull = false)
+    public ColumnOptions TrimEnd(char[]? trimChars = null)
     {
         TrimMode = FixedLengthHelper.TrimMode.TrimEnd;
         TrimChars = trimChars;
-        EmptyIsNull = emptyIsNull;
+        return this;
+    }
+
+    public ColumnOptions TreatEmptyStringAsNull()
+    {
+        EmptyIsNull = true;
         return this;
     }
 
