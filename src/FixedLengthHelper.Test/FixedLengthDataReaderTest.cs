@@ -84,9 +84,9 @@ public class FixedLengthDataReaderTest
         // Act
         using var reader = FixedLengthDataReader
             .CreateBuilder()
-            .AddColumn(0, 5)
-            .AddColumn(5, 21)
-            .AddColumn(26, 15)
+            .AddColumn("0", 0, 5)
+            .AddColumn("1", 5, 21)
+            .AddColumn("2", 26, 15)
             .Build(stream, Encoding.UTF8);
 
         // Assert
@@ -134,9 +134,9 @@ public class FixedLengthDataReaderTest
             // Act
             using var reader = FixedLengthDataReader
                 .CreateBuilder()
-                .AddColumn(0, 5)
-                .AddColumn(5, 21)
-                .AddColumn(26, 15)
+                .AddColumn("0", 0, 5)
+                .AddColumn("1", 5, 21)
+                .AddColumn("2", 26, 15)
                 .Build(stream, Encoding.UTF8);
 
             // Assert
@@ -170,9 +170,9 @@ public class FixedLengthDataReaderTest
             // Act
             using var reader = FixedLengthDataReader
                 .CreateBuilder()
-                .AddColumn(0, 5, TrimMode.TrimStart, ['0', '2', '4'])
-                .AddColumn(5, 21, TrimMode.TrimEnd)
-                .AddColumn(26, 15, TrimMode.Trim, ['0', '1', '2', '4'])
+                .AddColumn("0", 0, 5, TrimMode.TrimStart, ['0', '2', '4'])
+                .AddColumn("1", 5, 21, TrimMode.TrimEnd)
+                .AddColumn("2", 26, 15, TrimMode.Trim, ['0', '1', '2', '4'])
                 .Build(stream, Encoding.UTF8);
 
             // Assert
@@ -201,10 +201,10 @@ public class FixedLengthDataReaderTest
             // Act
             using var reader = FixedLengthDataReader
                 .CreateBuilder()
-                .AddColumn(0, 5, TrimMode.Trim, isEmptyNull: true)
-                .AddColumn(5, 21, TrimMode.Trim)
-                .AddColumn(26, 10, _ => true)
-                .AddColumn("Balance", 36, 5, _ => true)
+                .AddColumn("0", 0, 5, TrimMode.Trim, isEmptyNull: true)
+                .AddColumn("1", 5, 21, TrimMode.Trim)
+                .AddColumn("2", 26, 10, _ => true)
+                .AddColumn("3", 36, 5, _ => true)
                 .Build(stream, Encoding.UTF8);
 
             // Assert
