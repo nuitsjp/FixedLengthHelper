@@ -13,7 +13,7 @@ public class ColumnOptions(int ordinal, string name, int offsetBytes, int length
 
     public ColumnOptions AsType(SqlDbType sqlDbType)
     {
-        if (sqlDbType != System.Data.SqlDbType.Bit)
+        if (sqlDbType != SqlDbType.Bit)
         {
             throw new ArgumentException($"sqlDbType is only supported for SqlDbType.Bit, not {sqlDbType}.");
         }
@@ -23,21 +23,21 @@ public class ColumnOptions(int ordinal, string name, int offsetBytes, int length
 
     public ColumnOptions Trim(char[]? trimChars = null)
     {
-        _trimMode = FixedLengthHelper.TrimMode.Trim;
+        _trimMode = TrimMode.Trim;
         _trimChars = trimChars;
         return this;
     }
 
     public ColumnOptions TrimStart(char[]? trimChars = null)
     {
-        _trimMode = FixedLengthHelper.TrimMode.TrimStart;
+        _trimMode = TrimMode.TrimStart;
         _trimChars = trimChars;
         return this;
     }
 
     public ColumnOptions TrimEnd(char[]? trimChars = null)
     {
-        _trimMode = FixedLengthHelper.TrimMode.TrimEnd;
+        _trimMode = TrimMode.TrimEnd;
         _trimChars = trimChars;
         return this;
     }
@@ -62,7 +62,7 @@ public class ColumnOptions(int ordinal, string name, int offsetBytes, int length
             offsetBytes,
             lengthBytes,
             _sqlDbType,
-            _trimMode ?? FixedLengthHelper.TrimMode.None,
+            _trimMode ?? TrimMode.None,
             _trimChars,
             _treatEmptyStringAsNull,
             ConvertLocal);
@@ -72,10 +72,10 @@ public class ColumnOptions(int ordinal, string name, int offsetBytes, int length
             var trimValue = _trimMode switch
             {
                 null => s,
-                FixedLengthHelper.TrimMode.None => s,
-                FixedLengthHelper.TrimMode.Trim => s.Trim(_trimChars),
-                FixedLengthHelper.TrimMode.TrimStart => s.TrimStart(_trimChars),
-                FixedLengthHelper.TrimMode.TrimEnd => s.TrimEnd(_trimChars),
+                TrimMode.None => s,
+                TrimMode.Trim => s.Trim(_trimChars),
+                TrimMode.TrimStart => s.TrimStart(_trimChars),
+                TrimMode.TrimEnd => s.TrimEnd(_trimChars),
                 _ => throw new ArgumentOutOfRangeException()
             };
             if (_converter is not null)
@@ -83,7 +83,7 @@ public class ColumnOptions(int ordinal, string name, int offsetBytes, int length
                 return _converter(trimValue);
             }
 
-            if (_sqlDbType == System.Data.SqlDbType.Bit)
+            if (_sqlDbType == SqlDbType.Bit)
             {
                 return trimValue == "1";
             }
