@@ -5,11 +5,11 @@ namespace FixedLengthHelper;
 
 public class ColumnOptions(int ordinal, string name, int offsetBytes, int lengthBytes)
 {
-    private SqlDbType? SqlDbType { get; set; }
-    private TrimMode? TrimMode { get; set; }
-    private char[]? TrimChars { get; set; }
-    private bool EmptyIsNull { get; set; }
-    private Func<string, object>? Converter { get; set; }
+    private SqlDbType? _sqlDbType;
+    private TrimMode? _trimMode;
+    private char[]? _trimChars;
+    private bool _treatEmptyStringAsNull;
+    private Func<string, object>? _converter;
 
     public ColumnOptions AsType(SqlDbType sqlDbType)
     {
@@ -17,40 +17,40 @@ public class ColumnOptions(int ordinal, string name, int offsetBytes, int length
         {
             throw new ArgumentException($"sqlDbType is only supported for SqlDbType.Bit, not {sqlDbType}.");
         }
-        SqlDbType = sqlDbType;
+        _sqlDbType = sqlDbType;
         return this;
     }
 
     public ColumnOptions Trim(char[]? trimChars = null)
     {
-        TrimMode = FixedLengthHelper.TrimMode.Trim;
-        TrimChars = trimChars;
+        _trimMode = FixedLengthHelper.TrimMode.Trim;
+        _trimChars = trimChars;
         return this;
     }
 
     public ColumnOptions TrimStart(char[]? trimChars = null)
     {
-        TrimMode = FixedLengthHelper.TrimMode.TrimStart;
-        TrimChars = trimChars;
+        _trimMode = FixedLengthHelper.TrimMode.TrimStart;
+        _trimChars = trimChars;
         return this;
     }
 
     public ColumnOptions TrimEnd(char[]? trimChars = null)
     {
-        TrimMode = FixedLengthHelper.TrimMode.TrimEnd;
-        TrimChars = trimChars;
+        _trimMode = FixedLengthHelper.TrimMode.TrimEnd;
+        _trimChars = trimChars;
         return this;
     }
 
     public ColumnOptions TreatEmptyStringAsNull()
     {
-        EmptyIsNull = true;
+        _treatEmptyStringAsNull = true;
         return this;
     }
 
     public ColumnOptions Convert(Func<string, object> convert)
     {
-        Converter = convert;
+        _converter = convert;
         return this;
     }
 
@@ -61,34 +61,34 @@ public class ColumnOptions(int ordinal, string name, int offsetBytes, int length
             name,
             offsetBytes,
             lengthBytes,
-            SqlDbType,
-            TrimMode ?? FixedLengthHelper.TrimMode.None,
-            TrimChars,
-            EmptyIsNull,
+            _sqlDbType,
+            _trimMode ?? FixedLengthHelper.TrimMode.None,
+            _trimChars,
+            _treatEmptyStringAsNull,
             ConvertLocal);
 
         object ConvertLocal(string s)
         {
-            var trimValue = TrimMode switch
+            var trimValue = _trimMode switch
             {
                 null => s,
                 FixedLengthHelper.TrimMode.None => s,
-                FixedLengthHelper.TrimMode.Trim => s.Trim(TrimChars),
-                FixedLengthHelper.TrimMode.TrimStart => s.TrimStart(TrimChars),
-                FixedLengthHelper.TrimMode.TrimEnd => s.TrimEnd(TrimChars),
+                FixedLengthHelper.TrimMode.Trim => s.Trim(_trimChars),
+                FixedLengthHelper.TrimMode.TrimStart => s.TrimStart(_trimChars),
+                FixedLengthHelper.TrimMode.TrimEnd => s.TrimEnd(_trimChars),
                 _ => throw new ArgumentOutOfRangeException()
             };
-            if (Converter is not null)
+            if (_converter is not null)
             {
-                return Converter(trimValue);
+                return _converter(trimValue);
             }
 
-            if (SqlDbType == System.Data.SqlDbType.Bit)
+            if (_sqlDbType == System.Data.SqlDbType.Bit)
             {
                 return trimValue == "1";
             }
 
-            if (EmptyIsNull && string.IsNullOrEmpty(trimValue))
+            if (_treatEmptyStringAsNull && string.IsNullOrEmpty(trimValue))
             {
                 return DBNull.Value;
             }
