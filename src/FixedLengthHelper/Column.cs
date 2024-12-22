@@ -12,7 +12,7 @@
 /// <param name="IsDBNull">Function to determine if the value is DBNull.</param>
 public record Column(
     int Ordinal,
-    string? Name,
+    string Name,
     int OffsetBytes,
     int LengthBytes,
     TrimMode TrimMode,
