@@ -106,42 +106,6 @@ public class FixedLengthDataReaderTest
     }
 
     [Fact]
-    public void This_ByName()
-    {
-        // Arrange
-        var stream = new MemoryStream(
-            """
-                00554Pedro Gomez          123423006022004
-                01732中村 充志        004350011052002
-                00112Ramiro Politti       000000001022000
-                00924Pablo Ramirez        033213024112002
-                """u8.ToArray());
-
-        // Act
-        using var reader = FixedLengthDataReader
-            .CreateBuilder()
-            .AddColumn("CustomerId", 0, 5)
-            .AddColumn("Name", 5, 21)
-            .AddColumn("Balance", 26, 15)
-            .Build(stream, Encoding.UTF8);
-
-        // Assert
-        reader.Read().Should().BeTrue();
-        reader["CustomerId"].Should().Be("00554");
-        reader["Name"].Should().Be("Pedro Gomez          ");
-        reader["Balance"].Should().Be("123423006022004");
-
-        reader.Read().Should().BeTrue();
-        reader["CustomerId"].Should().Be("01732");
-        reader["Name"].Should().Be("中村 充志        ");
-        reader["Balance"].Should().Be("004350011052002");
-
-        reader.Read().Should().BeTrue();
-        reader.Read().Should().BeTrue();
-        reader.Read().Should().BeFalse();
-    }
-
-    [Fact]
     public void GetFieldType()
     {
         // Arrange
@@ -341,54 +305,6 @@ public class FixedLengthDataReaderTest
     }
 #endif
 
-    // ReSharper disable once InconsistentNaming
-    public class IsDBNull
-    {
-        [Fact]
-        public void Normality()
-        {
-            // Arrange
-            var stream = new MemoryStream(
-                "                          123423006022004"u8.ToArray());
-
-            // Act
-            using var reader = FixedLengthDataReader
-                .CreateBuilder()
-                .AddColumn(0, 5, TrimMode.Trim, isEmptyNull: true)
-                .AddColumn(5, 21, TrimMode.Trim)
-                .AddColumn(26, 10, _ => true)
-                .AddColumn("Balance", 36, 5, _ => true)
-                .Build(stream, Encoding.UTF8);
-
-            // Assert
-            reader.Read().Should().BeTrue();
-            reader.IsDBNull(0).Should().BeTrue();
-            reader.IsDBNull(1).Should().BeFalse();
-            reader.IsDBNull(2).Should().BeTrue();
-            reader.IsDBNull(3).Should().BeTrue();
-        }
-
-        [Fact]
-        public void WhenNotExist()
-        {
-            // Arrange
-            var stream = new MemoryStream(
-                "00554Pedro Gomez          123423006022004"u8.ToArray());
-            using var reader = FixedLengthDataReader
-                .CreateBuilder()
-                .Build(stream, Encoding.UTF8);
-
-            // Act
-            reader.Read().Should().BeTrue();
-            // ReSharper disable once AccessToDisposedClosure
-            var act = () => reader.IsDBNull(0);
-
-            // Assert
-            act.Should().Throw<IndexOutOfRangeException>();
-        }
-
-    }
-
     [Fact]
     public void NotSupported()
     {
@@ -400,6 +316,7 @@ public class FixedLengthDataReaderTest
 
         // Act & Assert
         // ReSharper disable AccessToDisposedClosure
+        ((Action)(() => { _ = reader["name"]; })).Should().Throw<NotSupportedException>();
         ((Action)(() => reader.GetName(0))).Should().Throw<NotSupportedException>();
         ((Action)(() => reader.GetDataTypeName(0))).Should().Throw<NotSupportedException>();
         ((Action)(() => reader.GetValues(new object[1]))).Should().Throw<NotSupportedException>();
@@ -419,6 +336,7 @@ public class FixedLengthDataReaderTest
         ((Action)(() => reader.GetDateTime(0))).Should().Throw<NotSupportedException>();
         ((Action)(() => reader.GetData(0))).Should().Throw<NotSupportedException>();
         ((Action)(() => reader.GetSchemaTable())).Should().Throw<NotSupportedException>();
+        ((Action)(() => reader.IsDBNull(0))).Should().Throw<NotSupportedException>();
         ((Action)(() => reader.NextResult())).Should().Throw<NotSupportedException>();
         // ReSharper restore AccessToDisposedClosure
     }
