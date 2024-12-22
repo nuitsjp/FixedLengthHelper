@@ -43,13 +43,15 @@ public record FixedLengthDataReaderConfig(IReadOnlyList<Column> Columns)
                 kvp.Key,
                 column.Offset,
                 column.Length,
+                null,
 #if NET8_0_OR_GREATER
                 Enum.Parse<TrimMode>(column.TrimMode),
 #else
                 (TrimMode)Enum.Parse(typeof(TrimMode), column.TrimMode),
 #endif
                 column.TrimChars?.ToCharArray(),
-                isDBNull
+                true,
+                s => s
             );
         }).ToList();
 

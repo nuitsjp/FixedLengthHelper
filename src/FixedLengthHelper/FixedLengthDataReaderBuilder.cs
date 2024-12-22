@@ -38,7 +38,24 @@ public class FixedLengthDataReaderBuilder
     /// <param name="lengthBytes"></param>
     /// <returns></returns>
     public FixedLengthDataReaderBuilder AddColumn(string? name, int offsetBytes, int lengthBytes)
-        => AddColumn(name, offsetBytes, lengthBytes, TrimMode.None);
+        => AddColumn(name, offsetBytes, lengthBytes, _ => {});
+
+    /// <summary>
+    /// Adds a column.
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="offsetBytes"></param>
+    /// <param name="lengthBytes"></param>
+    /// <param name="c"></param>
+    /// <returns></returns>
+    public FixedLengthDataReaderBuilder AddColumn(string name, int offsetBytes, int lengthBytes, Action<ColumnOptions> c)
+
+    {
+        var columnOptions = new ColumnOptions(Columns.Count, name, offsetBytes, lengthBytes);
+        c(columnOptions);
+        _columns.Add(columnOptions.Build());
+        return this;
+    }
 
     /// <summary>
     /// Adds a column.
@@ -79,7 +96,6 @@ public class FixedLengthDataReaderBuilder
     // ReSharper disable once MemberCanBePrivate.Global
     public FixedLengthDataReaderBuilder AddColumn(string? name, int offsetBytes, int lengthBytes, TrimMode trimMode, char[]? trimChars, Func<string, bool> isDbNull)
     {
-        _columns.Add(new Column(_columns.Count, name, offsetBytes, lengthBytes, trimMode, trimChars, isDbNull));
-        return this;
+        throw new NotSupportedException();
     }
 }

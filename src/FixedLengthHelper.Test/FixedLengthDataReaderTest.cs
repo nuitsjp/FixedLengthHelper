@@ -170,9 +170,9 @@ public class FixedLengthDataReaderTest
             // Act
             using var reader = FixedLengthDataReader
                 .CreateBuilder()
-                .AddColumn("0", 0, 5, TrimMode.TrimStart, ['0', '2', '4'])
-                .AddColumn("1", 5, 21, TrimMode.TrimEnd)
-                .AddColumn("2", 26, 15, TrimMode.Trim, ['0', '1', '2', '4'])
+                .AddColumn("0", 0, 5, c => c.TrimStart(['0', '2', '4']))
+                .AddColumn("1", 5, 21, c => c.TrimEnd())
+                .AddColumn("2", 26, 15, c => c.Trim(['0', '1', '2', '4']))
                 .Build(stream, Encoding.UTF8);
 
             // Assert
@@ -201,10 +201,10 @@ public class FixedLengthDataReaderTest
             // Act
             using var reader = FixedLengthDataReader
                 .CreateBuilder()
-                .AddColumn("0", 0, 5, TrimMode.Trim, isEmptyNull: true)
-                .AddColumn("1", 5, 21, TrimMode.Trim)
-                .AddColumn("2", 26, 10, _ => true)
-                .AddColumn("3", 36, 5, _ => true)
+                .AddColumn("0", 0, 5, c => c.Trim(emptyIsNull: true))
+                .AddColumn("1", 5, 21, c => c.Trim())
+                .AddColumn("2", 26, 10, c => c.Convert(s => DBNull.Value))
+                .AddColumn("3", 36, 5, c => c.Convert(s => DBNull.Value))
                 .Build(stream, Encoding.UTF8);
 
             // Assert
