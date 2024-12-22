@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 
 namespace FixedLengthHelper;
 
@@ -22,9 +23,7 @@ public class ColumnOptions(int ordinal, string name, int offsetBytes, int length
 
     public ColumnOptions Trim(char[]? trimChars = null, bool emptyIsNull = false)
     {
-        TrimMode = FixedLengthHelper.TrimMode.Trim;
-        TrimChars = trimChars;
-        EmptyIsNull = emptyIsNull;
+        Converter = s => s.Trim(trimChars);
         return this;
     }
 
@@ -61,7 +60,7 @@ public class ColumnOptions(int ordinal, string name, int offsetBytes, int length
             TrimMode ?? FixedLengthHelper.TrimMode.None,
             TrimChars,
             EmptyIsNull,
-            ConvertLocal);
+            Converter ?? (s => s) );
 
         object ConvertLocal(string s)
         {
