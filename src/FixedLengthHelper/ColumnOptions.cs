@@ -23,7 +23,9 @@ public class ColumnOptions(int ordinal, string name, int offsetBytes, int length
 
     public ColumnOptions Trim(char[]? trimChars = null, bool emptyIsNull = false)
     {
-        Converter = s => s.Trim(trimChars);
+        TrimMode = FixedLengthHelper.TrimMode.Trim;
+        TrimChars = trimChars;
+        EmptyIsNull = emptyIsNull;
         return this;
     }
 
@@ -60,7 +62,7 @@ public class ColumnOptions(int ordinal, string name, int offsetBytes, int length
             TrimMode ?? FixedLengthHelper.TrimMode.None,
             TrimChars,
             EmptyIsNull,
-            Converter ?? (s => s) );
+            ConvertLocal);
 
         object ConvertLocal(string s)
         {
