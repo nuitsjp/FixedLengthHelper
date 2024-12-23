@@ -9,7 +9,7 @@ public class ColumnOptions(int ordinal, string name, int offsetBytes, int length
     private TrimMode? _trimMode;
     private char[]? _trimChars;
     private bool _treatEmptyStringAsNull;
-    private Func<string, object>? _converter;
+    private Func<string, object>? _convert;
 
     public ColumnOptions AsType(SqlDbType sqlDbType)
     {
@@ -50,7 +50,7 @@ public class ColumnOptions(int ordinal, string name, int offsetBytes, int length
 
     public ColumnOptions Convert(Func<string, object> convert)
     {
-        _converter = convert;
+        _convert = convert;
         return this;
     }
 
@@ -65,35 +65,6 @@ public class ColumnOptions(int ordinal, string name, int offsetBytes, int length
             _trimMode ?? TrimMode.None,
             _trimChars,
             _treatEmptyStringAsNull,
-            ConvertLocal);
-
-        object ConvertLocal(string s)
-        {
-            var trimValue = _trimMode switch
-            {
-                null => s,
-                TrimMode.None => s,
-                TrimMode.Trim => s.Trim(_trimChars),
-                TrimMode.TrimStart => s.TrimStart(_trimChars),
-                TrimMode.TrimEnd => s.TrimEnd(_trimChars),
-                _ => throw new ArgumentOutOfRangeException()
-            };
-            if (_converter is not null)
-            {
-                return _converter(trimValue);
-            }
-
-            if (_sqlDbType == SqlDbType.Bit)
-            {
-                return trimValue == "1";
-            }
-
-            if (_treatEmptyStringAsNull && string.IsNullOrEmpty(trimValue))
-            {
-                return DBNull.Value;
-            }
-
-            return trimValue;
-        }
+            _convert);
     }
 }

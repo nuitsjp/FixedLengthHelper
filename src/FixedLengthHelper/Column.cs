@@ -25,7 +25,7 @@ public class Column
         TrimMode trimMode,
         char[]? trimChars,
         bool treatEmptyStringAsNull,
-        Func<string, object> convert)
+        Func<string, object>? convert)
     {
         Ordinal = ordinal;
         Name = name;
@@ -60,7 +60,17 @@ public class Column
 
         if (_sqlDbType == SqlDbType.Bit)
         {
-            return trimValue == "1";
+            if (string.IsNullOrEmpty(trimValue))
+            {
+                return DBNull.Value;
+            }
+
+            return trimValue switch
+            {
+                "1" => true,
+                "0" => false,
+                _ => throw new InvalidCastException($"Cannot convert '{trimValue}' to Bit.")
+            };
         }
 
         if (_treatEmptyStringAsNull && string.IsNullOrEmpty(trimValue))
