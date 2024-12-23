@@ -1,5 +1,7 @@
 # FixedLengthHelper
 
+[Japanese document](README-ja.md)
+
 FixedLengthHelper is a library to work with fixed-length formats. Provides low-level operations that handle fixed-length formats.
 
 FixedLengthHelper also supports multi-byte strings and surrogate pairs.
