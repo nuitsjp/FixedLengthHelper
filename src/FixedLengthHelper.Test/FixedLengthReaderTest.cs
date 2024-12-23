@@ -18,6 +18,24 @@ public class FixedLengthReaderTest
     [Theory]
     // ASCII Characters
     [InlineData("Shift_JIS", "0123456789", "0", "12")]
+    public void IsClosed(string encodingName, string line, string offset, string expected)
+    {
+        // Arrange
+        var encoding = Encoding.GetEncoding(encodingName);
+        MemoryStream stream = new(encoding.GetBytes(line));
+        IFixedLengthReader reader = new FixedLengthReader(new ByteStreamReader(stream), encoding);
+
+        // Act
+        reader.IsClosed.Should().BeFalse();
+        reader.Dispose();
+
+        // Assert
+        reader.IsClosed.Should().BeTrue();
+    }
+
+    [Theory]
+    // ASCII Characters
+    [InlineData("Shift_JIS", "0123456789", "0", "12")]
     [InlineData("UTF-8", "0123456789", "0", "12")]
     // Multibyte Characters
     [InlineData("Shift_JIS", "0あ3456789", "0", "あ")]
