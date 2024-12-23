@@ -23,7 +23,7 @@ public class FixedLengthReaderTest
         // Arrange
         var encoding = Encoding.GetEncoding(encodingName);
         MemoryStream stream = new(encoding.GetBytes(line));
-        IFixedLengthReader reader = new FixedLengthReader(new ByteStreamReader(stream), encoding);
+        IFixedLengthReader reader = new FixedLengthReader(stream, encoding);
 
         // Act
         reader.IsClosed.Should().BeFalse();
