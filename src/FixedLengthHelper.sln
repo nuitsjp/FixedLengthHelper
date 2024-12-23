@@ -9,10 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FixedLengthHelper.Test", "F
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample", "Sample\Sample.csproj", "{2677D768-6E9E-40AE-8CE0-BB8B4C5BA3E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FixedLengthHelper.SqlBulkCopier", "FixedLengthHelper.SqlBulkCopier\FixedLengthHelper.SqlBulkCopier.csproj", "{B9686816-E370-45C6-AE13-E649F04E36CE}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FixedLengthHelper.SqlBulkCopier.Test", "FixedLengthHelper.SqlBulkCopier.Test\FixedLengthHelper.SqlBulkCopier.Test.csproj", "{2BD1EF76-448B-4F46-A232-08BF4A649E73}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,14 +27,6 @@ Global
 		{2677D768-6E9E-40AE-8CE0-BB8B4C5BA3E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2677D768-6E9E-40AE-8CE0-BB8B4C5BA3E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2677D768-6E9E-40AE-8CE0-BB8B4C5BA3E6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B9686816-E370-45C6-AE13-E649F04E36CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B9686816-E370-45C6-AE13-E649F04E36CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B9686816-E370-45C6-AE13-E649F04E36CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B9686816-E370-45C6-AE13-E649F04E36CE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2BD1EF76-448B-4F46-A232-08BF4A649E73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2BD1EF76-448B-4F46-A232-08BF4A649E73}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2BD1EF76-448B-4F46-A232-08BF4A649E73}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2BD1EF76-448B-4F46-A232-08BF4A649E73}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
