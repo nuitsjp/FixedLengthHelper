@@ -7,7 +7,7 @@ namespace FixedLengthHelper;
 /// </summary>
 /// <param name="byteStreamReader"></param>
 /// <param name="encoding"></param>
-public class FixedLengthReader(
+public sealed class FixedLengthReader(
     IByteStreamReader byteStreamReader, 
     Encoding encoding) 
     : IFixedLengthReader
@@ -25,6 +25,22 @@ public class FixedLengthReader(
     public FixedLengthReader(string path, Encoding encoding) 
         : this(new ByteStreamReader(File.Open(path, FileMode.Open)), encoding)
     {
+    }
+
+    /// <inheritdoc />
+    public bool IsClosed => byteStreamReader.IsClosed;
+
+    /// <inheritdoc />
+    public byte[] CurrentRow
+    {
+        get
+        {
+            if (_currentLine == null)
+            {
+                throw new InvalidOperationException("Read method must be called first. And the end of the stream must not be reached.");
+            }
+            return _currentLine;
+        }
     }
 
     /// <summary>
@@ -79,7 +95,19 @@ public class FixedLengthReader(
     /// </summary>
     public void Dispose()
     {
-        byteStreamReader.Dispose();
+        Dispose(true);
+    }
+    
+    /// <summary>
+    /// Closes the FixedLengthReader.
+    /// </summary>
+    /// <param name="disposing"></param>
+    private void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            byteStreamReader.Dispose();
+        }
     }
 
 #if NET8_0_OR_GREATER

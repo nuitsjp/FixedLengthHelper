@@ -10,7 +10,7 @@
 	<PropertyGroup>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<PackageId>FixedLengthHelper</PackageId>
-		<Version>1.0.0</Version>
+		<Version>1.2.0</Version>
 		<Authors>nuits.jp</Authors>
 		<Copyright>© 2024 nuits.jp</Copyright>
 		<Description>FixedLengthHelper is a library to work with fixed-length formats.</Description>
@@ -34,9 +34,13 @@
 	</ItemGroup>
 	
 	<ItemGroup Condition="'$(TargetFramework)' == 'net48'">
-		<PackageReference Include="System.Memory" Version="4.5.5" />
-		<PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
-		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />
+		<PackageReference Include="System.Memory" Version="4.6.0" />
+		<PackageReference Include="System.Threading.Tasks.Extensions" Version="4.6.0" />
+		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.0" />
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <PackageReference Include="System.Text.Json" Version="9.0.0" />
 	</ItemGroup>
 
 </Project>

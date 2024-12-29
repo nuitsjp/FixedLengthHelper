@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace FixedLengthHelper;
 
@@ -7,8 +7,12 @@ namespace FixedLengthHelper;
 /// </summary>
 public class ByteStreamReader : IByteStreamReader
 {
+    // ReSharper disable MemberCanBePrivate.Global
+    // ReSharper disable ConvertToConstant.Global
     public static readonly int DefaultBufferSize = 4096;  // Byte buffer size
     public static readonly int MinBufferSize = 128;
+    // ReSharper restore ConvertToConstant.Global
+    // ReSharper restore MemberCanBePrivate.Global
 
     /// <summary>
     /// Source stream.
@@ -44,6 +48,7 @@ public class ByteStreamReader : IByteStreamReader
     /// Checks if an async read operation is in progress.
     /// </summary>
     /// <exception cref="InvalidOperationException"></exception>
+    [ExcludeFromCodeCoverage]
     private void CheckAsyncTaskInProgress()
     {
         // If the task is not yet completed, throw an exception.
@@ -77,6 +82,11 @@ public class ByteStreamReader : IByteStreamReader
             ? new byte[DefaultBufferSize]
             : new byte[bufferSize.Value];
     }
+
+    /// <summary>
+    /// Gets a value indicating whether the stream is closed.
+    /// </summary>
+    public bool IsClosed => _stream.CanRead is false;
 
     /// <summary>
     /// Reads a line of bytes from the stream.
@@ -225,7 +235,7 @@ public class ByteStreamReader : IByteStreamReader
     {
         CheckAsyncTaskInProgress();
 
-        Task<byte[]?> task = ReadLineAsyncInner(cancellationToken);
+        var task = ReadLineAsyncInner(cancellationToken);
         _asyncReadTask = task;
 
         return new ValueTask<byte[]?>(task);

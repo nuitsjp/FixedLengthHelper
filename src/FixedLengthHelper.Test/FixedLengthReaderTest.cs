@@ -1,9 +1,11 @@
-﻿using System.Text;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using FluentAssertions;
 using Moq;
 
 namespace FixedLengthHelper.Test;
 
+[SuppressMessage("Performance", "CA1859:可能な場合は具象型を使用してパフォーマンスを向上させる")]
 public class FixedLengthReaderTest
 {
 #if NET8_0_OR_GREATER
@@ -30,7 +32,7 @@ public class FixedLengthReaderTest
         byteStreamReader
             .Setup(x => x.ReadLine())
             .Returns(encoding.GetBytes(line));
-        using var reader = new FixedLengthReader(byteStreamReader.Object, encoding);
+        using IFixedLengthReader reader = new FixedLengthReader(byteStreamReader.Object, encoding);
 
         // Act & Assert
         reader.Read().Should().BeTrue();
@@ -55,9 +57,9 @@ public class FixedLengthReaderTest
             .Setup(x => x.ReadLineAsync())
             .ReturnsAsync(encoding.GetBytes(line));
 #if NET48_OR_GREATER
-        using var reader = new FixedLengthReader(byteStreamReader.Object, encoding);
+        using IFixedLengthReader reader = new FixedLengthReader(byteStreamReader.Object, encoding);
 #else
-        await using var reader = new FixedLengthReader(byteStreamReader.Object, encoding);
+        await using IFixedLengthReader reader = new FixedLengthReader(byteStreamReader.Object, encoding);
 #endif
 
         // Act & Assert
@@ -80,7 +82,7 @@ public class FixedLengthReaderTest
         byteStreamReader
             .Setup(x => x.ReadLine())
             .Returns(encoding.GetBytes(line));
-        using var reader = new FixedLengthReader(byteStreamReader.Object, encoding);
+        using IFixedLengthReader reader = new FixedLengthReader(byteStreamReader.Object, encoding);
 
         // Act & Assert
         reader.Read().Should().BeTrue();
@@ -103,7 +105,7 @@ public class FixedLengthReaderTest
     public void Constructor_FromFile()
     {
         // Arrange
-        var reader = new FixedLengthReader("Sample.txt", Encoding.UTF8);
+        IFixedLengthReader reader = new FixedLengthReader("Sample.txt", Encoding.UTF8);
 
         // Act & Assert
         reader.Read().Should().BeTrue();
@@ -111,11 +113,7 @@ public class FixedLengthReaderTest
     }
 
     [Fact]
-#if NET48_OR_GREATER
-    public void GetField_WithInvalidTrim()
-#else
     public async Task GetField_WithInvalidTrim()
-#endif
     {
         // Arrange
         Mock<IByteStreamReader> byteStreamReader = new();
@@ -123,13 +121,14 @@ public class FixedLengthReaderTest
             .Setup(x => x.ReadLine())
             .Returns("hello"u8.ToArray());
 #if NET48_OR_GREATER
-        using var reader = new FixedLengthReader(byteStreamReader.Object, Encoding.UTF8);
+        using IFixedLengthReader reader = new FixedLengthReader(byteStreamReader.Object, Encoding.UTF8);
 #else
-        await using var reader = new FixedLengthReader(byteStreamReader.Object, Encoding.UTF8);
+        await using IFixedLengthReader reader = new FixedLengthReader(byteStreamReader.Object, Encoding.UTF8);
 #endif
 
         // Act
-        reader.Read().Should().BeTrue();
+        (await reader.ReadAsync()).Should().BeTrue();
+        // ReSharper disable once AccessToDisposedClosure
         var act = () => reader.GetField(1, 2, (TrimMode)9);
 
         // Assert
@@ -148,10 +147,11 @@ public class FixedLengthReaderTest
         byteStreamReader
             .Setup(x => x.ReadLine())
             .Returns(encoding.GetBytes(line));
-        using var reader = new FixedLengthReader(byteStreamReader.Object, encoding);
+        using IFixedLengthReader reader = new FixedLengthReader(byteStreamReader.Object, encoding);
 
         // Act & Assert
         reader.Read().Should().BeTrue();
+        // ReSharper disable once AccessToDisposedClosure
         var act = () => reader.GetField(offset, length);
         act.Should().Throw<ArgumentOutOfRangeException>();
     }

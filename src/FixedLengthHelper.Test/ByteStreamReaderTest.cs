@@ -1,9 +1,12 @@
-﻿using System.Text;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using FluentAssertions;
 using Moq;
 
 namespace FixedLengthHelper.Test;
 
+[SuppressMessage("Performance", "CA1859:可能な場合は具象型を使用してパフォーマンスを向上させる")]
+[SuppressMessage("Performance", "CA1806:メソッドの結果を無視しない")]
 public class ByteStreamReaderTest
 {
 #if NET8_0_OR_GREATER
@@ -40,7 +43,7 @@ public class ByteStreamReaderTest
         var encoding = Encoding.GetEncoding(encodingName);
         var first = new string('あ', 8000);
         var second = new string('A', 4096);
-        var third = "123";
+        const string third = "123";
         var forth = new string('B', 100);
         var content = first + newline + second + newline + third + newline + forth;
         var stream = new MemoryStream(encoding.GetBytes(content));
@@ -81,14 +84,14 @@ public class ByteStreamReaderTest
         var encoding = Encoding.GetEncoding(encodingName);
         var first = new string('あ', 8000);
         var second = new string('A', 4096);
-        var third = "123";
+        const string third = "123";
         var forth = new string('B', 100);
         var content = first + newline + second + newline + third + newline + forth;
         var stream = new MemoryStream(encoding.GetBytes(content));
 #if NET48_OR_GREATER
-        using var reader = new ByteStreamReader(stream, bufferSize);
+        using IByteStreamReader reader = new ByteStreamReader(stream, bufferSize);
 #else
-        await using var reader = new ByteStreamReader(stream, bufferSize);
+        await using IByteStreamReader reader = new ByteStreamReader(stream, bufferSize);
 #endif
 
         // Act
@@ -96,14 +99,14 @@ public class ByteStreamReaderTest
         (await reader.ReadLineAsync()).Should().BeEquivalentTo(encoding.GetBytes(second));
         (await reader.ReadLineAsync()).Should().BeEquivalentTo(encoding.GetBytes(third));
         (await reader.ReadLineAsync()).Should().BeEquivalentTo(encoding.GetBytes(forth));
-        (await reader.ReadLineAsync()).Should().BeNull();
+        (await reader.ReadLineAsync(new CancellationTokenSource().Token)).Should().BeNull();
     }
 
     [Fact]
     public void CloseAndDispose()
     {
         var stream = new MemoryStream(Encoding.UTF8.GetBytes(string.Empty));
-        var reader = new ByteStreamReader(stream);
+        IByteStreamReader reader = new ByteStreamReader(stream);
 
         reader.Close();
         reader.Dispose();
@@ -116,7 +119,7 @@ public class ByteStreamReaderTest
     public async Task CloseAndDisposeAsync()
     {
         var stream = new MemoryStream(Encoding.UTF8.GetBytes(string.Empty));
-        var reader = new ByteStreamReader(stream);
+        IByteStreamReader reader = new ByteStreamReader(stream);
 
         reader.Close();
         await reader.DisposeAsync();
@@ -135,7 +138,7 @@ public class ByteStreamReaderTest
         streamMock.Setup(x => x.Close()).Throws(new Exception());
         
 
-        var reader = new ByteStreamReader(streamMock.Object);
+        IByteStreamReader reader = new ByteStreamReader(streamMock.Object);
 
         // Act
         var act = () => reader.Dispose();
@@ -149,7 +152,7 @@ public class ByteStreamReaderTest
     public async Task DisposeAsync()
     {
         var stream = new MemoryStream(Encoding.UTF8.GetBytes(string.Empty));
-        var reader = new ByteStreamReader(stream);
+        IByteStreamReader reader = new ByteStreamReader(stream);
 
         await reader.DisposeAsync();
 
@@ -165,7 +168,7 @@ public class ByteStreamReaderTest
         streamMock.Setup(x => x.DisposeAsync()).Throws(new Exception());
 
 
-        var reader = new ByteStreamReader(streamMock.Object);
+        IByteStreamReader reader = new ByteStreamReader(streamMock.Object);
 
         // Act
         var act = async () => await reader.DisposeAsync();
