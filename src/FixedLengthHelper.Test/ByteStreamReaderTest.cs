@@ -40,14 +40,16 @@ public class ByteStreamReaderTest
     public void ReadLine(string encodingName, string newline, int? bufferSize)
     {
         // Arrange
-        var encoding = Encoding.GetEncoding(encodingName);
+        var encoding = encodingName == "UTF-8"
+            ? new UTF8Encoding(false)
+            : Encoding.GetEncoding(encodingName);
         var first = new string('あ', 8000);
         var second = new string('A', 4096);
         const string third = "123";
         var forth = new string('B', 100);
         var content = first + newline + second + newline + third + newline + forth;
         var stream = new MemoryStream(encoding.GetBytes(content));
-        using var reader = new ByteStreamReader(stream, bufferSize);
+        using var reader = new ByteStreamReader(stream, encoding, bufferSize);
 
         // Act
         reader.ReadLine().Should().BeEquivalentTo(encoding.GetBytes(first));
@@ -89,9 +91,9 @@ public class ByteStreamReaderTest
         var content = first + newline + second + newline + third + newline + forth;
         var stream = new MemoryStream(encoding.GetBytes(content));
 #if NET48_OR_GREATER
-        using IByteStreamReader reader = new ByteStreamReader(stream, bufferSize);
+        using IByteStreamReader reader = new ByteStreamReader(stream, encoding, bufferSize);
 #else
-        await using IByteStreamReader reader = new ByteStreamReader(stream, bufferSize);
+        await using IByteStreamReader reader = new ByteStreamReader(stream, encoding, bufferSize);
 #endif
 
         // Act
@@ -106,7 +108,7 @@ public class ByteStreamReaderTest
     public void CloseAndDispose()
     {
         var stream = new MemoryStream(Encoding.UTF8.GetBytes(string.Empty));
-        IByteStreamReader reader = new ByteStreamReader(stream);
+        IByteStreamReader reader = new ByteStreamReader(stream, Encoding.UTF8);
 
         reader.Close();
         reader.Dispose();
@@ -119,7 +121,7 @@ public class ByteStreamReaderTest
     public async Task CloseAndDisposeAsync()
     {
         var stream = new MemoryStream(Encoding.UTF8.GetBytes(string.Empty));
-        IByteStreamReader reader = new ByteStreamReader(stream);
+        IByteStreamReader reader = new ByteStreamReader(stream, Encoding.UTF8);
 
         reader.Close();
         await reader.DisposeAsync();
@@ -138,7 +140,7 @@ public class ByteStreamReaderTest
         streamMock.Setup(x => x.Close()).Throws(new Exception());
         
 
-        IByteStreamReader reader = new ByteStreamReader(streamMock.Object);
+        IByteStreamReader reader = new ByteStreamReader(streamMock.Object, Encoding.UTF8);
 
         // Act
         var act = () => reader.Dispose();
@@ -152,7 +154,7 @@ public class ByteStreamReaderTest
     public async Task DisposeAsync()
     {
         var stream = new MemoryStream(Encoding.UTF8.GetBytes(string.Empty));
-        IByteStreamReader reader = new ByteStreamReader(stream);
+        IByteStreamReader reader = new ByteStreamReader(stream, Encoding.UTF8);
 
         await reader.DisposeAsync();
 
@@ -168,7 +170,7 @@ public class ByteStreamReaderTest
         streamMock.Setup(x => x.DisposeAsync()).Throws(new Exception());
 
 
-        IByteStreamReader reader = new ByteStreamReader(streamMock.Object);
+        IByteStreamReader reader = new ByteStreamReader(streamMock.Object, Encoding.UTF8);
 
         // Act
         var act = async () => await reader.DisposeAsync();
@@ -185,7 +187,7 @@ public class ByteStreamReaderTest
         stream.Close();
         stream.CanRead.Should().BeFalse();
         // ReSharper disable once ObjectCreationAsStatement
-        Action action = () => new ByteStreamReader(stream);
+        Action action = () => new ByteStreamReader(stream, Encoding.UTF8);
         action.Should().Throw<ArgumentException>();
     }
 
@@ -197,7 +199,7 @@ public class ByteStreamReaderTest
         using var stream = new MemoryStream();
         // ReSharper disable once AccessToDisposedClosure
         // ReSharper disable once ObjectCreationAsStatement
-        Action action = () => new ByteStreamReader(stream, bufferSize);
+        Action action = () => new ByteStreamReader(stream, Encoding.UTF8, bufferSize);
         action.Should().Throw<ArgumentException>();
     }
 

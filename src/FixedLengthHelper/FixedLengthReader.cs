@@ -23,7 +23,7 @@ public sealed class FixedLengthReader(
     /// <param name="path"></param>
     /// <param name="encoding"></param>
     public FixedLengthReader(string path, Encoding encoding) 
-        : this(new ByteStreamReader(File.Open(path, FileMode.Open)), encoding)
+        : this(new ByteStreamReader(File.Open(path, FileMode.Open), encoding), encoding)
     {
     }
 

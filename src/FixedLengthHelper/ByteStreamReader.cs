@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Text;
 
 namespace FixedLengthHelper;
 
@@ -18,6 +19,16 @@ public class ByteStreamReader : IByteStreamReader
     /// Source stream.
     /// </summary>
     private readonly Stream _stream;
+
+    /// <summary>
+    /// Encoding used to read the stream.
+    /// </summary>
+    private readonly Encoding _encoding;
+
+    /// <summary>
+    /// When true, the first line has been read.
+    /// </summary>
+    private bool _isFirstLine = true;
 
     /// <summary>
     /// Buffer used for reading from the stream.
@@ -62,10 +73,11 @@ public class ByteStreamReader : IByteStreamReader
     /// Initializes a new instance of the <see cref="ByteStreamReader"/> class for the specified stream.
     /// </summary>
     /// <param name="stream"></param>
+    /// <param name="encoding"></param>
     /// <param name="bufferSize"></param>
     /// <exception cref="ArgumentException"></exception>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    public ByteStreamReader(Stream stream, int? bufferSize = null)
+    public ByteStreamReader(Stream stream, Encoding encoding, int? bufferSize = null)
     {
         if (!stream.CanRead)
         {
@@ -78,6 +90,7 @@ public class ByteStreamReader : IByteStreamReader
         }
 
         _stream = stream;
+        _encoding = encoding;
         _buffer = bufferSize is null
             ? new byte[DefaultBufferSize]
             : new byte[bufferSize.Value];
@@ -174,6 +187,13 @@ public class ByteStreamReader : IByteStreamReader
         {
             // Reset the position to 0 to read from the beginning of the buffer.
             _readPosition = 0;
+
+            if (_isFirstLine)
+            {
+                var offset = _encoding.GetPreamble().Length;
+                _ = _stream.Read(_buffer, 0, offset);
+                _isFirstLine = false;
+            }
 
             // Read the buffer data.
             _readLength = _stream.Read(_buffer, 0, _buffer.Length);
