@@ -101,11 +101,16 @@ public class FixedLengthReaderTest
     }
 
 
-    [Fact]
-    public void Constructor_FromFile()
+    [Theory]
+    [InlineData("Sample-UTF8.txt", false)]
+    [InlineData("Sample-UTF8-with-BOM.txt", true)]
+    public void Constructor_FromFile(string fileName, bool withBom)
     {
+        Encoding encoding = withBom 
+            ? new UTF8Encoding(true) 
+            : new UTF8Encoding(false);
         // Arrange
-        IFixedLengthReader reader = new FixedLengthReader("Sample.txt", Encoding.UTF8);
+        IFixedLengthReader reader = new FixedLengthReader(fileName, encoding);
 
         // Act & Assert
         reader.Read().Should().BeTrue();
