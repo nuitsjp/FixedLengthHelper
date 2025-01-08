@@ -1,4 +1,6 @@
-﻿namespace FixedLengthHelper;
+﻿using System.Text;
+
+namespace FixedLengthHelper;
 
 /// <summary>
 /// Fixed-length reader.
@@ -9,6 +11,10 @@ public interface IFixedLengthReader : IDisposable
 public interface IFixedLengthReader : IDisposable, IAsyncDisposable
 #endif
 {
+    /// <summary>
+    /// Gets the encoding.
+    /// </summary>
+    Encoding Encoding { get; }
     /// <summary>
     /// Gets a value indicating whether the stream is closed.
     /// </summary>

@@ -38,6 +38,9 @@ public sealed class FixedLengthReader : IFixedLengthReader
     }
 
     /// <inheritdoc />
+    public Encoding Encoding => _byteStreamReader.Encoding;
+
+    /// <inheritdoc />
     public bool IsClosed => _byteStreamReader.IsClosed;
 
     /// <inheritdoc />
