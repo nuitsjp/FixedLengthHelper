@@ -10,7 +10,7 @@ public sealed class FixedLengthReader : IFixedLengthReader
     /// <summary>
     /// Fixed-length reader.
     /// </summary>
-    private readonly IByteStreamReader _byteStreamReader;
+    private readonly ByteStreamReader _byteStreamReader;
 
     /// <summary>
     /// Encoding.
@@ -47,7 +47,7 @@ public sealed class FixedLengthReader : IFixedLengthReader
     /// </summary>
     /// <param name="byteStreamReader"></param>
     /// <param name="encoding"></param>
-    private FixedLengthReader(IByteStreamReader byteStreamReader, 
+    private FixedLengthReader(ByteStreamReader byteStreamReader, 
         Encoding encoding)
     {
         _byteStreamReader = byteStreamReader;

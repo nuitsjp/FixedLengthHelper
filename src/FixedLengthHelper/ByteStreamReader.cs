@@ -6,7 +6,7 @@ namespace FixedLengthHelper;
 /// <summary>
 /// Reads a line of bytes from a stream.
 /// </summary>
-public class ByteStreamReader : IByteStreamReader
+public class ByteStreamReader : IDisposable
 {
     // ReSharper disable MemberCanBePrivate.Global
     // ReSharper disable ConvertToConstant.Global
