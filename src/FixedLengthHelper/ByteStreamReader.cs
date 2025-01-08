@@ -23,7 +23,7 @@ internal class ByteStreamReader : IDisposable
     /// <summary>
     /// Encoding used to read the stream.
     /// </summary>
-    private readonly Encoding _encoding;
+    internal Encoding Encoding { get; }
 
     /// <summary>
     /// When true, the first line has been read.
@@ -90,7 +90,7 @@ internal class ByteStreamReader : IDisposable
         }
 
         _stream = stream;
-        _encoding = encoding;
+        Encoding = encoding;
         _buffer = bufferSize is null
             ? new byte[DefaultBufferSize]
             : new byte[bufferSize.Value];
@@ -190,7 +190,7 @@ internal class ByteStreamReader : IDisposable
 
             if (_isFirstLine)
             {
-                var offset = _encoding.GetPreamble().Length;
+                var offset = Encoding.GetPreamble().Length;
                 _ = _stream.Read(_buffer, 0, offset);
                 _isFirstLine = false;
             }
@@ -351,7 +351,7 @@ internal class ByteStreamReader : IDisposable
 
             if (_isFirstLine)
             {
-                var offset = _encoding.GetPreamble().Length;
+                var offset = Encoding.GetPreamble().Length;
                 _ = await _stream.ReadAsync(_buffer, 0, offset, cancellationToken);
                 _isFirstLine = false;
             }
