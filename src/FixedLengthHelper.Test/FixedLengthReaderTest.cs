@@ -66,11 +66,7 @@ public class FixedLengthReaderTest
     {
         // Arrange
         var encoding = Encoding.GetEncoding(encodingName);
-        Mock<IByteStreamReader> byteStreamReader = new();
-        byteStreamReader
-            .Setup(x => x.ReadLine())
-            .Returns(encoding.GetBytes(line));
-        using IFixedLengthReader reader = new FixedLengthReader(byteStreamReader.Object, encoding);
+        using IFixedLengthReader reader = new FixedLengthReader(line.ToStream(encoding), encoding);
 
         // Act & Assert
         reader.Read().Should().BeTrue();
@@ -109,14 +105,10 @@ public class FixedLengthReaderTest
     public async Task GetField_WithInvalidTrim()
     {
         // Arrange
-        Mock<IByteStreamReader> byteStreamReader = new();
-        byteStreamReader
-            .Setup(x => x.ReadLine())
-            .Returns("hello"u8.ToArray());
 #if NET48_OR_GREATER
-        using IFixedLengthReader reader = new FixedLengthReader(byteStreamReader.Object, Encoding.UTF8);
+        using IFixedLengthReader reader = new FixedLengthReader("hello".ToStream(Encoding.UTF8), Encoding.UTF8);
 #else
-        await using IFixedLengthReader reader = new FixedLengthReader(byteStreamReader.Object, Encoding.UTF8);
+        await using IFixedLengthReader reader = new FixedLengthReader("hello".ToStream(Encoding.UTF8), Encoding.UTF8);
 #endif
 
         // Act
@@ -136,11 +128,7 @@ public class FixedLengthReaderTest
     {
         // Arrange
         var encoding = Encoding.GetEncoding(encodingName);
-        Mock<IByteStreamReader> byteStreamReader = new();
-        byteStreamReader
-            .Setup(x => x.ReadLine())
-            .Returns(encoding.GetBytes(line));
-        using IFixedLengthReader reader = new FixedLengthReader(byteStreamReader.Object, encoding);
+        using IFixedLengthReader reader = new FixedLengthReader(line.ToStream(encoding), encoding);
 
         // Act & Assert
         reader.Read().Should().BeTrue();

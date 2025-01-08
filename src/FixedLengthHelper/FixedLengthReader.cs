@@ -5,13 +5,18 @@ namespace FixedLengthHelper;
 /// <summary>
 /// Fixed-length reader.
 /// </summary>
-/// <param name="byteStreamReader"></param>
-/// <param name="encoding"></param>
-public sealed class FixedLengthReader(
-    IByteStreamReader byteStreamReader, 
-    Encoding encoding) 
-    : IFixedLengthReader
+public sealed class FixedLengthReader : IFixedLengthReader
 {
+    /// <summary>
+    /// Fixed-length reader.
+    /// </summary>
+    private readonly IByteStreamReader _byteStreamReader;
+
+    /// <summary>
+    /// Encoding.
+    /// </summary>
+    private readonly Encoding _encoding;
+
     /// <summary>
     /// Current line.
     /// </summary>
@@ -37,8 +42,20 @@ public sealed class FixedLengthReader(
     {
     }
 
+    /// <summary>
+    /// Fixed-length reader.
+    /// </summary>
+    /// <param name="byteStreamReader"></param>
+    /// <param name="encoding"></param>
+    private FixedLengthReader(IByteStreamReader byteStreamReader, 
+        Encoding encoding)
+    {
+        _byteStreamReader = byteStreamReader;
+        _encoding = encoding;
+    }
+
     /// <inheritdoc />
-    public bool IsClosed => byteStreamReader.IsClosed;
+    public bool IsClosed => _byteStreamReader.IsClosed;
 
     /// <inheritdoc />
     public byte[] CurrentRow
@@ -59,7 +76,7 @@ public sealed class FixedLengthReader(
     /// <returns>If the end of the stream has been reached, returns false. </returns>
     public bool Read()
     {
-        _currentLine = byteStreamReader.ReadLine();
+        _currentLine = _byteStreamReader.ReadLine();
         return _currentLine != null;
     }
 
@@ -69,7 +86,7 @@ public sealed class FixedLengthReader(
     /// <returns>If the end of the stream has been reached, returns false. </returns>
     public async Task<bool> ReadAsync()
     {
-        _currentLine = await byteStreamReader.ReadLineAsync();
+        _currentLine = await _byteStreamReader.ReadLineAsync();
         return _currentLine != null;
     }
 
@@ -86,9 +103,9 @@ public sealed class FixedLengthReader(
     {
         var span = _currentLine.AsSpan(offsetBytes, lengthBytes);
 #if NET48_OR_GREATER
-        var field = encoding.GetString(span.ToArray());
+        var field = _encoding.GetString(span.ToArray());
 #else
-        var field = encoding.GetString(span);
+        var field = _encoding.GetString(span);
 #endif
         return trimMode switch
         {
@@ -116,7 +133,7 @@ public sealed class FixedLengthReader(
     {
         if (disposing)
         {
-            byteStreamReader.Dispose();
+            _byteStreamReader.Dispose();
         }
     }
 
@@ -126,7 +143,7 @@ public sealed class FixedLengthReader(
     /// </summary>
     public async ValueTask DisposeAsync()
     {
-        await byteStreamReader.DisposeAsync();
+        await _byteStreamReader.DisposeAsync();
     }
 #endif
 }
