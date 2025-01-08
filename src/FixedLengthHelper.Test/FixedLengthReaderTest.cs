@@ -28,11 +28,7 @@ public class FixedLengthReaderTest
     {
         // Arrange
         var encoding = Encoding.GetEncoding(encodingName);
-        Mock<IByteStreamReader> byteStreamReader = new();
-        byteStreamReader
-            .Setup(x => x.ReadLine())
-            .Returns(encoding.GetBytes(line));
-        using IFixedLengthReader reader = new FixedLengthReader(byteStreamReader.Object, encoding);
+        using IFixedLengthReader reader = new FixedLengthReader(line.ToStream(encoding), encoding);
 
         // Act & Assert
         reader.Read().Should().BeTrue();
@@ -52,15 +48,7 @@ public class FixedLengthReaderTest
     {
         // Arrange
         var encoding = Encoding.GetEncoding(encodingName);
-        Mock<IByteStreamReader> byteStreamReader = new();
-        byteStreamReader
-            .Setup(x => x.ReadLineAsync())
-            .ReturnsAsync(encoding.GetBytes(line));
-#if NET48_OR_GREATER
-        using IFixedLengthReader reader = new FixedLengthReader(byteStreamReader.Object, encoding);
-#else
-        await using IFixedLengthReader reader = new FixedLengthReader(byteStreamReader.Object, encoding);
-#endif
+        using IFixedLengthReader reader = new FixedLengthReader(line.ToStream(encoding), encoding);
 
         // Act & Assert
         (await reader.ReadAsync()).Should().BeTrue();

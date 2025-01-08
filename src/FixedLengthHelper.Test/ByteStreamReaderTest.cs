@@ -89,11 +89,10 @@ public class ByteStreamReaderTest
         const string third = "123";
         var forth = new string('B', 100);
         var content = first + newline + second + newline + third + newline + forth;
-        var stream = new MemoryStream(encoding.GetBytes(content));
 #if NET48_OR_GREATER
-        using IByteStreamReader reader = new ByteStreamReader(stream, encoding, bufferSize);
+        using IByteStreamReader reader = new ByteStreamReader(content.ToStream(encoding), encoding, bufferSize);
 #else
-        await using IByteStreamReader reader = new ByteStreamReader(stream, encoding, bufferSize);
+        await using IByteStreamReader reader = new ByteStreamReader(content.ToStream(encoding), encoding, bufferSize);
 #endif
 
         // Act

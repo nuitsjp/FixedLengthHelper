@@ -27,6 +27,16 @@ public sealed class FixedLengthReader(
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the FixedLengthReader class.
+    /// </summary>
+    /// <param name="stream"></param>
+    /// <param name="encoding"></param>
+    public FixedLengthReader(Stream stream, Encoding encoding)
+        : this(new ByteStreamReader(stream, encoding), encoding)
+    {
+    }
+
     /// <inheritdoc />
     public bool IsClosed => byteStreamReader.IsClosed;
 

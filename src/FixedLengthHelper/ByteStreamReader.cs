@@ -349,6 +349,13 @@ public class ByteStreamReader : IByteStreamReader
             // Reset the position to 0 to read from the beginning of the buffer.
             _readPosition = 0;
 
+            if (_isFirstLine)
+            {
+                var offset = _encoding.GetPreamble().Length;
+                _ = await _stream.ReadAsync(_buffer, 0, offset, cancellationToken);
+                _isFirstLine = false;
+            }
+
             // Read the buffer data.
             _readLength = await _stream.ReadAsync(_buffer, 0, _buffer.Length, cancellationToken);
 
