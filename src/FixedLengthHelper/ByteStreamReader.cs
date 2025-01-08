@@ -6,7 +6,7 @@ namespace FixedLengthHelper;
 /// <summary>
 /// Reads a line of bytes from a stream.
 /// </summary>
-public class ByteStreamReader : IDisposable
+internal class ByteStreamReader : IDisposable
 {
     // ReSharper disable MemberCanBePrivate.Global
     // ReSharper disable ConvertToConstant.Global
@@ -77,7 +77,7 @@ public class ByteStreamReader : IDisposable
     /// <param name="bufferSize"></param>
     /// <exception cref="ArgumentException"></exception>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    public ByteStreamReader(Stream stream, Encoding encoding, int? bufferSize = null)
+    internal ByteStreamReader(Stream stream, Encoding encoding, int? bufferSize = null)
     {
         if (!stream.CanRead)
         {
@@ -99,7 +99,7 @@ public class ByteStreamReader : IDisposable
     /// <summary>
     /// Gets a value indicating whether the stream is closed.
     /// </summary>
-    public bool IsClosed => _stream.CanRead is false;
+    internal bool IsClosed => _stream.CanRead is false;
 
     /// <summary>
     /// Reads a line of bytes from the stream.
@@ -107,7 +107,7 @@ public class ByteStreamReader : IDisposable
     /// <returns>
     /// Read bytes. If the end of the stream has been reached, returns null.
     /// </returns>
-    public byte[]? ReadLine()
+    internal byte[]? ReadLine()
     {
         // If we're at the end of the buffer data, read from the stream.
         CheckAsyncTaskInProgress();
@@ -243,7 +243,7 @@ public class ByteStreamReader : IDisposable
     /// Reads a line of bytes from the stream asynchronously.
     /// </summary>
     /// <returns></returns>
-    public Task<byte[]?> ReadLineAsync() 
+    internal Task<byte[]?> ReadLineAsync() 
         => ReadLineAsync(CancellationToken.None).AsTask();
 
     /// <summary>
@@ -251,7 +251,7 @@ public class ByteStreamReader : IDisposable
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public ValueTask<byte[]?> ReadLineAsync(CancellationToken cancellationToken)
+    internal ValueTask<byte[]?> ReadLineAsync(CancellationToken cancellationToken)
     {
         CheckAsyncTaskInProgress();
 
@@ -390,14 +390,6 @@ public class ByteStreamReader : IDisposable
             // Return the number of bytes read.
             return read;
         }
-    }
-
-    /// <summary>
-    /// Closes the ByteStreamReader.
-    /// </summary>
-    public void Close()
-    {
-        Dispose();
     }
 
     /// <summary>

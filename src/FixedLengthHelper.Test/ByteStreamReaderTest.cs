@@ -104,31 +104,15 @@ public class ByteStreamReaderTest
     }
 
     [Fact]
-    public void CloseAndDispose()
+    public void Dispose()
     {
         var stream = new MemoryStream(Encoding.UTF8.GetBytes(string.Empty));
         var reader = new ByteStreamReader(stream, Encoding.UTF8);
 
-        reader.Close();
         reader.Dispose();
 
         stream.CanRead.Should().BeFalse();
     }
-
-#if NET8_0_OR_GREATER
-    [Fact]
-    public async Task CloseAndDisposeAsync()
-    {
-        var stream = new MemoryStream(Encoding.UTF8.GetBytes(string.Empty));
-        var reader = new ByteStreamReader(stream, Encoding.UTF8);
-
-        reader.Close();
-        await reader.DisposeAsync();
-
-        stream.CanRead.Should().BeFalse();
-    }
-#endif
-
 
     [Fact]
     public void Dispose_WhenCloseOfStreamThrowException()
