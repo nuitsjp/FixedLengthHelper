@@ -13,11 +13,6 @@ public sealed class FixedLengthReader : IFixedLengthReader
     private readonly ByteStreamReader _byteStreamReader;
 
     /// <summary>
-    /// Encoding.
-    /// </summary>
-    private readonly Encoding _encoding;
-
-    /// <summary>
     /// Current line.
     /// </summary>
     private byte[]? _currentLine;
@@ -28,7 +23,7 @@ public sealed class FixedLengthReader : IFixedLengthReader
     /// <param name="path"></param>
     /// <param name="encoding"></param>
     public FixedLengthReader(string path, Encoding encoding) 
-        : this(new ByteStreamReader(File.Open(path, FileMode.Open), encoding), encoding)
+        : this(File.Open(path, FileMode.Open), encoding)
     {
     }
 
@@ -38,20 +33,8 @@ public sealed class FixedLengthReader : IFixedLengthReader
     /// <param name="stream"></param>
     /// <param name="encoding"></param>
     public FixedLengthReader(Stream stream, Encoding encoding)
-        : this(new ByteStreamReader(stream, encoding), encoding)
     {
-    }
-
-    /// <summary>
-    /// Fixed-length reader.
-    /// </summary>
-    /// <param name="byteStreamReader"></param>
-    /// <param name="encoding"></param>
-    private FixedLengthReader(ByteStreamReader byteStreamReader, 
-        Encoding encoding)
-    {
-        _byteStreamReader = byteStreamReader;
-        _encoding = encoding;
+        _byteStreamReader = new ByteStreamReader(stream, encoding);
     }
 
     /// <inheritdoc />
@@ -103,9 +86,9 @@ public sealed class FixedLengthReader : IFixedLengthReader
     {
         var span = _currentLine.AsSpan(offsetBytes, lengthBytes);
 #if NET48_OR_GREATER
-        var field = _encoding.GetString(span.ToArray());
+        var field = _byteStreamReader.Encoding.GetString(span.ToArray());
 #else
-        var field = _encoding.GetString(span);
+        var field = _byteStreamReader.Encoding.GetString(span);
 #endif
         return trimMode switch
         {
