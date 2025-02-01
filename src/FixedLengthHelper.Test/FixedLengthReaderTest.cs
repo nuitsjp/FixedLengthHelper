@@ -2,6 +2,7 @@
 using System.Text;
 using FluentAssertions;
 using Moq;
+// ReSharper disable UseAwaitUsing
 
 namespace FixedLengthHelper.Test;
 
@@ -86,6 +87,7 @@ public class FixedLengthReaderTest
 
 
     [Theory]
+    [InlineData("Sample-UTF8.txt", true)]
     [InlineData("Sample-UTF8.txt", false)]
     [InlineData("Sample-UTF8-with-BOM.txt", true)]
     public void Constructor_FromFile(string fileName, bool withBom)
@@ -94,10 +96,28 @@ public class FixedLengthReaderTest
             ? new UTF8Encoding(true) 
             : new UTF8Encoding(false);
         // Arrange
-        IFixedLengthReader reader = new FixedLengthReader(fileName, encoding);
+        using IFixedLengthReader reader = new FixedLengthReader(fileName, encoding);
 
         // Act & Assert
         reader.Read().Should().BeTrue();
+        reader.GetField(0, 5, TrimMode.TrimStart, '0').Should().Be("554");
+    }
+
+
+    [Theory]
+    [InlineData("Sample-UTF8.txt", true)]
+    [InlineData("Sample-UTF8.txt", false)]
+    [InlineData("Sample-UTF8-with-BOM.txt", true)]
+    public async Task Constructor_FromFileAsync(string fileName, bool withBom)
+    {
+        Encoding encoding = withBom
+            ? new UTF8Encoding(true)
+            : new UTF8Encoding(false);
+        // Arrange
+        using IFixedLengthReader reader = new FixedLengthReader(fileName, encoding);
+
+        // Act & Assert
+        (await reader.ReadAsync()).Should().BeTrue();
         reader.GetField(0, 5, TrimMode.TrimStart, '0').Should().Be("554");
     }
 
