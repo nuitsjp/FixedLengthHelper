@@ -10,7 +10,7 @@
 	<PropertyGroup>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<PackageId>FixedLengthHelper</PackageId>
-		<Version>1.5.0</Version>
+		<Version>1.6.0</Version>
 		<Authors>nuits.jp</Authors>
 		<Copyright>© 2024 nuits.jp</Copyright>
 		<Description>FixedLengthHelper is a library to work with fixed-length formats.</Description>

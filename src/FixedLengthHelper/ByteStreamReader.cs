@@ -188,15 +188,24 @@ internal class ByteStreamReader : IDisposable
             // Reset the position to 0 to read from the beginning of the buffer.
             _readPosition = 0;
 
+            // Read data from the stream into the buffer.
+            _readLength = _stream.Read(_buffer, 0, _buffer.Length);
+
             if (_isFirstLine)
             {
-                var offset = Encoding.GetPreamble().Length;
-                _ = _stream.Read(_buffer, 0, offset);
+                var preamble = Encoding.GetPreamble();
+                if (preamble.Length > 0 && _readLength >= preamble.Length)
+                {
+                    // Check if the read data matches the BOM
+                    if (_buffer.AsSpan(0, preamble.Length).SequenceEqual(preamble))
+                    {
+                        // If BOM matches, exclude BOM from the buffer
+                        _buffer.AsSpan(preamble.Length, _readLength - preamble.Length).CopyTo(_buffer);
+                        _readLength -= preamble.Length;
+                    }
+                }
                 _isFirstLine = false;
             }
-
-            // Read the buffer data.
-            _readLength = _stream.Read(_buffer, 0, _buffer.Length);
 
             // Return the number of bytes read.
             return _readLength;
@@ -349,15 +358,24 @@ internal class ByteStreamReader : IDisposable
             // Reset the position to 0 to read from the beginning of the buffer.
             _readPosition = 0;
 
+            // Read data from the stream into the buffer.
+            _readLength = await _stream.ReadAsync(_buffer, 0, _buffer.Length, cancellationToken);
+
             if (_isFirstLine)
             {
-                var offset = Encoding.GetPreamble().Length;
-                _ = await _stream.ReadAsync(_buffer, 0, offset, cancellationToken);
+                var preamble = Encoding.GetPreamble();
+                if (preamble.Length > 0 && _readLength >= preamble.Length)
+                {
+                    // Check if the read data matches the BOM
+                    if (_buffer.AsSpan(0, preamble.Length).SequenceEqual(preamble))
+                    {
+                        // If BOM matches, exclude BOM from the buffer
+                        _buffer.AsSpan(preamble.Length, _readLength - preamble.Length).CopyTo(_buffer);
+                        _readLength -= preamble.Length;
+                    }
+                }
                 _isFirstLine = false;
             }
-
-            // Read the buffer data.
-            _readLength = await _stream.ReadAsync(_buffer, 0, _buffer.Length, cancellationToken);
 
             // Return the number of bytes read.
             return _readLength;
